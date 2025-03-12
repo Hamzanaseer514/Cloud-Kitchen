@@ -68,7 +68,7 @@ const FeaturedChefs: React.FC = () => {
               </div>
               <div className="p-6">
                 <h3 className="text-xl font-semibold text-gray-900">{chef.name}</h3>
-                <p className="text-primary-600 font-medium">{chef.specialty}</p>
+                <p className="text-orange-600 font-medium">{chef.specialty}</p>
                 
                 <div className="flex items-center mt-2">
                   <div className="flex items-center">

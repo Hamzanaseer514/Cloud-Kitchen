@@ -26,16 +26,39 @@ const LoginForm: React.FC = () => {
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     setError(null);
-    
+  
     try {
-      await login(data.email, data.password);
-      navigate('/');
-    } catch (err) {
-      setError('Invalid email or password. Please try again.');
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+  
+      const result = await response.json();
+      console.log("result",result)
+      if (!response.ok) {
+        throw new Error(result?.message || "Invalid email or password.");
+      }
+
+      // const {success, user} = result;
+      // if(success){
+      //   localStorage.setItem('cloudKitchenUser', JSON.stringify
+      //   ({...user}));
+      // }
+  
+      // Assuming the API returns a token and user data
+      await login(result.user);
+  
+      navigate("/");
+    } catch (err: any) {
+      setError(err.message || "Login failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
+  
   
   return (
     <div className="w-full max-w-md mx-auto">

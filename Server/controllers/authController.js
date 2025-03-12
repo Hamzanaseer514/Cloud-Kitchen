@@ -6,11 +6,11 @@ const asyncHandler = require('../middleware/async');
 // @route   POST /api/auth/register
 // @access  Public
 exports.register = asyncHandler(async (req, res, next) => {
-  const { name, email, password, phone, role } = req.body;
-
+  const { fullname, email, password, phone, role } = req.body;
+  console.log(req.body);
   // Create user
   const user = await User.create({
-    name,
+    fullname,
     email,
     password,
     phone,
@@ -25,28 +25,36 @@ exports.register = asyncHandler(async (req, res, next) => {
 // @access  Public
 exports.login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
+  console.log("Received Request Body:", req.body);
 
   // Validate email & password
   if (!email || !password) {
+    console.log("Missing Email or Password");
     return next(new ErrorResponse('Please provide an email and password', 400));
   }
 
-  // Check for user
+  // Check for user in database
   const user = await User.findOne({ email }).select('+password');
+  console.log("User from DB:", user);
 
   if (!user) {
+    console.log("User not found in database");
     return next(new ErrorResponse('Invalid credentials', 401));
   }
 
   // Check if password matches
   const isMatch = await user.matchPassword(password);
+  console.log("Password Match Status:", isMatch);
 
   if (!isMatch) {
+    console.log("Passwords do not match");
     return next(new ErrorResponse('Invalid credentials', 401));
   }
 
+  console.log("User authenticated successfully!");
   sendTokenResponse(user, 200, res);
 });
+
 
 // @desc    Get current logged in user
 // @route   GET /api/auth/me
@@ -93,9 +101,10 @@ const sendTokenResponse = (user, statusCode, res) => {
       token,
       user: {
         id: user._id,
-        name: user.name,
+        fullname: user.fullname,
         email: user.email,
         role: user.role
       }
     });
 };
+

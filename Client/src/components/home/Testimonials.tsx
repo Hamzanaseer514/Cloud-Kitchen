@@ -53,7 +53,7 @@ const Testimonials: React.FC = () => {
           {testimonials.map((testimonial) => (
             <div key={testimonial.id} className="bg-gray-800 rounded-lg p-6 relative">
               <div className="absolute -top-6 left-1/2 transform -translate-x-1/2">
-                <div className="h-12 w-12 rounded-full overflow-hidden border-2 border-primary-500">
+                <div className="h-12 w-12 rounded-full overflow-hidden border-2 border-orange-500">
                   <img
                     src={testimonial.image}
                     alt={testimonial.name}
@@ -87,7 +87,7 @@ const Testimonials: React.FC = () => {
         
         <div className="mt-16 text-center">
           <div className="inline-flex items-center space-x-2">
-            <span className="text-4xl font-bold text-primary-400">4.8</span>
+            <span className="text-4xl font-bold text-orange-400">4.8</span>
             <div>
               <div className="flex">
                 {[...Array(5)].map((_, i) => (

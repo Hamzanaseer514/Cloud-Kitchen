@@ -8,7 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 import { UserRole } from '../../types';
 
 interface RegisterFormData {
-  name: string;
+  fullname: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -37,13 +37,30 @@ const RegisterForm: React.FC = () => {
   const onSubmit = async (data: RegisterFormData) => {
     setIsLoading(true);
     setError(null);
-    
+  
     try {
       const { confirmPassword, ...userData } = data;
-      await registerUser(userData, password, selectedRole);
-      navigate('/');
-    } catch (err) {
-      setError('Registration failed. Please try again.');
+  
+      const response = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...userData, role: selectedRole }),
+      });
+  
+      const result = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(result.message || "Registration failed");
+      }
+  
+      // Assuming registerUser is handling authentication context updates
+      await registerUser(userData, data.password, selectedRole);
+  
+      navigate("/");
+    } catch (err: any) {
+      setError(err.message || "Registration failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -72,7 +89,7 @@ const RegisterForm: React.FC = () => {
             type="button"
             className={`py-3 px-4 border rounded-md flex items-center justify-center ${
               selectedRole === 'customer'
-                ? 'bg-primary-50 border-orange-500 text-orange-400'
+                ? 'bg-orange-50 border-orange-500 text-orange-700'
                 : 'border-gray-300 text-gray-700 hover:bg-gray-50'
             }`}
             onClick={() => setSelectedRole('customer')}
@@ -84,7 +101,7 @@ const RegisterForm: React.FC = () => {
             type="button"
             className={`py-3 px-4 border rounded-md flex items-center justify-center ${
               selectedRole === 'chef'
-                ? 'bg-primary-50 border-primary-500 text-primary-700'
+                ? 'bg-orange-50 border-orange-500 text-orange-700'
                 : 'border-gray-300 text-gray-700 hover:bg-gray-50'
             }`}
             onClick={() => setSelectedRole('chef')}
@@ -99,7 +116,7 @@ const RegisterForm: React.FC = () => {
             type="button"
             className={`py-3 px-4 border rounded-md flex items-center justify-center ${
               selectedRole === 'rider'
-                ? 'bg-primary-50 border-orange-500 text-orange-400'
+                ? 'bg-orange-50 border-orange-500 text-orange-700'
                 : 'border-gray-300 text-gray-700 hover:bg-gray-50'
             }`}
             onClick={() => setSelectedRole('rider')}
@@ -117,8 +134,8 @@ const RegisterForm: React.FC = () => {
           <Input
             label="Full Name"
             leftIcon={<User className="h-5 w-5 text-gray-400" />}
-            error={errors.name?.message}
-            {...register('name', {
+            error={errors.fullname?.message}
+            {...register('fullname', {
               required: 'Name is required',
               minLength: {
                 value: 2,

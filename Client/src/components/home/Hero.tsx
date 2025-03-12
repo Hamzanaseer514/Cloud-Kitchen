@@ -20,7 +20,7 @@ const Hero: React.FC = () => {
         <div className="max-w-3xl">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white leading-tight">
             Homemade Food, <br />
-            <span className="text-primary-400">Delivered</span> With Love
+            <span className="text-orange-400">Delivered</span> With Love
           </h1>
           <p className="mt-6 text-xl text-gray-300 max-w-2xl">
             Discover authentic home-cooked meals made by passionate home chefs in your neighborhood. Fresh, delicious, and delivered to your doorstep.

@@ -119,7 +119,7 @@ const PopularDishes: React.FC = () => {
                 <div className="flex justify-between items-start">
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900">{dish.name}</h3>
-                    <Link to={`/chef/${dish.chefId}`} className="text-primary-600 hover:text-primary-700">
+                    <Link to={`/chef/${dish.chefId}`} className="text-orange-600 hover:text-orange-700">
                       By {dish.chef}
                     </Link>
                   </div>

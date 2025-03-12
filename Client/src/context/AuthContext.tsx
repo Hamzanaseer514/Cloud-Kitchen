@@ -5,7 +5,7 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (user: object) => Promise<void>;
   register: (userData: Partial<User>, password: string, role: UserRole) => Promise<void>;
   logout: () => void;
 }
@@ -72,22 +72,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(false);
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (user: object) => {
     setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // // Simulate API call
+      // await new Promise(resolve => setTimeout(resolve, 1000));
       
-      const foundUser = MOCK_USERS.find(u => u.email === email && u.password === password);
+      // const foundUser = MOCK_USERS.find(u => u.email === email && u.password === password);
       
-      if (!foundUser) {
-        throw new Error('Invalid credentials');
-      }
+      // if (!foundUser) {
+      //   throw new Error('Invalid credentials');
+      // }
       
-      // Remove password before storing
-      const { password: _, ...userWithoutPassword } = foundUser;
-      setUser(userWithoutPassword as User);
-      localStorage.setItem('cloudKitchenUser', JSON.stringify(userWithoutPassword));
+      // // Remove password before storing
+      // const { password: _, ...userWithoutPassword } = foundUser;
+      // setUser(userWithoutPassword as User);
+      localStorage.setItem('cloudKitchenUser', JSON.stringify(user));
     } catch (error) {
       console.error('Login error:', error);
       throw error;
@@ -116,7 +116,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } as User;
       
       // In a real app, we would save this to the database
-      MOCK_USERS.push({ ...newUser, password });
+      // MOCK_USERS.push({ ...newUser, password });
       
       setUser(newUser);
       localStorage.setItem('cloudKitchenUser', JSON.stringify(newUser));

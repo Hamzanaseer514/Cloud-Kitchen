@@ -2,7 +2,7 @@ export type UserRole = 'customer' | 'chef' | 'rider' | 'admin';
 
 export interface User {
   id: string;
-  name: string;
+  fullname: string;
   email: string;
   role: UserRole;
   avatar?: string;
