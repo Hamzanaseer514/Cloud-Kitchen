@@ -42,11 +42,10 @@ const LoginForm: React.FC = () => {
         throw new Error(result?.message || "Invalid email or password.");
       }
 
-      // const {success, user} = result;
-      // if(success){
-      //   localStorage.setItem('cloudKitchenUser', JSON.stringify
-      //   ({...user}));
-      // }
+      const {success, token} = result;
+      if(success){
+        localStorage.setItem('token', token);
+      }
   
       // Assuming the API returns a token and user data
       await login(result.user);

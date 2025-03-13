@@ -29,6 +29,8 @@ const ChefRegisterPage = () => {
     exit: { opacity: 0, x: -20 }
   };
 
+  // step 1 working 
+
   const [formData, setFormData] = useState({
     fullname: "",
     email: "",
@@ -65,7 +67,9 @@ const ChefRegisterPage = () => {
     try {
       const response = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json"
+        
+        },
         body: JSON.stringify(formData),
       });
 
@@ -74,12 +78,79 @@ const ChefRegisterPage = () => {
 
       if (response.ok) {
         setStep(2); // ✅ Move to next step if registration successful
+        localStorage.setItem("token", result.token);
       } else {
         setErrors({ apiError: result.message || "Registration failed" });
       }
     } catch (error) {
       setLoading(false);
       setErrors({ apiError: "Network error, try again later" });
+    }
+  };
+
+  ////////////////////////
+
+  // Step 2 working 
+  const [kitchenData, setKitchenData] = useState({
+    kitchenName: "",
+    openingTime: "",
+    closingTime: "",
+    specification: "",
+    userImage: "",
+    kitchenLogo: ""
+  });
+
+  const [kitchenErrors, setKitchenErrors] = useState({});
+  const handleKitchenChange = (e) => {
+    setKitchenData({ ...kitchenData, [e.target.name]: e.target.value });
+  };
+  const validateKitchenForm = () => {
+    let errors = {};
+
+    if (!kitchenData.kitchenName) errors.kitchenName = "Kitchen Name required";
+    if (!kitchenData.openingTime) errors.openingTime = "Opening time required";
+    if (!kitchenData.closingTime) errors.closingTime = "Closing time required";
+    if (!kitchenData.specification) errors.specification = "Specification required";
+
+    setKitchenErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleNextKitchen = () => {
+    if (validateKitchenForm()) {
+      setStep(3);
+    }
+  };
+  const handleFileUpload = (e, field) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setKitchenData({ ...kitchenData, [field]: imageUrl });
+    }
+  };
+
+  const handleSubmitKitchen = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch("http://localhost:5000/api/kitchen/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" ,
+            "Authorization": `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify(kitchenData),
+      });
+
+      const result = await response.json();
+      setLoading(false);
+
+      if (response.ok) {
+        setShowSuccess(true);
+      } else {
+        setKitchenErrors({ apiError: result.message || "Kitchen registration failed" });
+      }
+    } catch (error) {
+      setLoading(false);
+      setKitchenErrors({ apiError: "Network error, try again later" });
     }
   };
 
@@ -264,74 +335,79 @@ const ChefRegisterPage = () => {
                 </h2>
 
                 {/* Kitchen Name */}
-                <motion.div
-                  initial={{ scale: 0.95 }}
-                  animate={{ scale: 1 }}
-                  whileFocus={{ borderColor: '#FF8C00' }}
-                  className="relative"
-                >
+                <motion.div className="relative">
                   <label className="absolute -top-4 left-4 px-2 bg-white text-sm font-medium text-gray-600">
                     Kitchen Name
                   </label>
                   <input
-                    className="w-full px-4 py-3 border-2 rounded-lg bg-gray-50 focus:border-orange-400 transition-all duration-300"
+                    name="kitchenName"
+                    value={kitchenData.kitchenName}
+                    onChange={handleKitchenChange}
+                    className="w-full px-4 py-3 border-2 rounded-lg bg-gray-50 focus:border-orange-400"
                     placeholder="Enter kitchen name"
                     type="text"
                   />
+                  {kitchenErrors.kitchenName && <p className="text-red-500 text-sm">{kitchenErrors.kitchenName}</p>}
                 </motion.div>
 
                 {/* Kitchen Timings */}
                 <div className="grid grid-cols-2 gap-4">
-                  <motion.div
-                    initial={{ scale: 0.95 }}
-                    animate={{ scale: 1 }}
-                    whileFocus={{ borderColor: '#FF8C00' }}
-                    className="relative"
-                  >
+                  <motion.div className="relative">
                     <label className="absolute -top-4 left-4 px-2 bg-white text-sm font-medium text-gray-600">
                       Opening Time
                     </label>
                     <input
-                      className="w-full px-4 py-3 border-2 rounded-lg bg-gray-50 focus:border-orange-400 transition-all duration-300"
+                      name="openingTime"
+                      value={kitchenData.openingTime}
+                      onChange={handleKitchenChange}
+                      className="w-full px-4 py-3 border-2 rounded-lg bg-gray-50 focus:border-orange-400"
                       type="time"
                     />
+                    {kitchenErrors.openingTime && <p className="text-red-500 text-sm">{kitchenErrors.openingTime}</p>}
                   </motion.div>
 
-                  <motion.div
-                    initial={{ scale: 0.95 }}
-                    animate={{ scale: 1 }}
-                    whileFocus={{ borderColor: '#FF8C00' }}
-                    className="relative"
-                  >
+                  <motion.div className="relative">
                     <label className="absolute -top-4 left-4 px-2 bg-white text-sm font-medium text-gray-600">
                       Closing Time
                     </label>
                     <input
-                      className="w-full px-4 py-3 border-2 rounded-lg bg-gray-50 focus:border-orange-400 transition-all duration-300"
+                      name="closingTime"
+                      value={kitchenData.closingTime}
+                      onChange={handleKitchenChange}
+                      className="w-full px-4 py-3 border-2 rounded-lg bg-gray-50 focus:border-orange-400"
                       type="time"
                     />
+                    {kitchenErrors.closingTime && <p className="text-red-500 text-sm">{kitchenErrors.closingTime}</p>}
                   </motion.div>
                 </div>
 
                 {/* Kitchen Specifications */}
-                <motion.div
-                  initial={{ scale: 0.95 }}
-                  animate={{ scale: 1 }}
-                  whileFocus={{ borderColor: '#FF8C00' }}
-                  className="relative"
-                >
+                <motion.div className="relative">
                   <label className="absolute -top-4 left-4 px-2 bg-white text-sm font-medium text-gray-600">
                     Specifications
                   </label>
                   <textarea
-                    className="w-full px-4 py-3 border-2 rounded-lg bg-gray-50 focus:border-orange-400 transition-all duration-300 resize-none"
+                    name="specification"
+                    value={kitchenData.specification}
+                    onChange={handleKitchenChange}
+                    className="w-full px-4 py-3 border-2 rounded-lg bg-gray-50 focus:border-orange-400"
                     placeholder="Describe your kitchen (e.g., Special Dishes, Capacity, Equipment)"
                     rows={3}
                   ></textarea>
+                  {kitchenErrors.specification && <p className="text-red-500 text-sm">{kitchenErrors.specification}</p>}
                 </motion.div>
-              </div>
 
+                {/* Next Button */}
+                <button
+                  onClick={handleNextKitchen}
+                  // disabled={!validateKitchenForm()}
+                  className="w-full bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 transition-all"
+                >
+                  Next
+                </button>
+              </div>
             )}
+
 
             {/* Step 3: Upload Pictures */}
             {step === 3 && (
@@ -341,48 +417,40 @@ const ChefRegisterPage = () => {
                   Upload Pictures
                 </h2>
 
-                {/* Upload Your Picture */}
-                <motion.div
-                  initial={{ opacity: 0.8, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  whileHover={{ scale: 1.05 }}
-                  className="relative flex flex-col items-center justify-center border-2 border-dashed border-orange-500 rounded-xl p-6 text-center cursor-pointer bg-gray-50 hover:bg-orange-50 transition-all duration-300 shadow-lg"
-                >
-                  <label htmlFor="upload-picture" className="cursor-pointer">
-                    <div className="flex flex-col items-center gap-2">
-                      <span className="text-orange-500 text-4xl">📷</span>
-                      <p className="text-gray-700 font-medium">Upload Your Picture</p>
-                      <p className="text-sm text-gray-500">Click or Drag & Drop</p>
-                    </div>
+                {/* User Image Upload */}
+                <div className="relative flex flex-col items-center justify-center border-2 border-dashed border-orange-500 rounded-xl p-6 text-center cursor-pointer bg-gray-50 hover:bg-orange-50 transition-all">
+                  <label htmlFor="userImage">
+                    <span className="text-orange-500 text-4xl">📷</span>
+                    <p className="text-gray-700 font-medium">Upload Your Picture</p>
                   </label>
-                  <input type="file" className="hidden" id="upload-picture" />
-                </motion.div>
+                  <input type="file" id="userImage" className="hidden" onChange={(e) => handleFileUpload(e, "userImage")} />
+                </div>
 
-                {/* Upload Kitchen Image (Logo) */}
-                <motion.div
-                  initial={{ opacity: 0.8, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  whileHover={{ scale: 1.05 }}
-                  className="relative flex flex-col items-center justify-center border-2 border-dashed border-orange-500 rounded-xl p-6 text-center cursor-pointer bg-gray-50 hover:bg-orange-50 transition-all duration-300 shadow-lg"
-                >
-                  <label htmlFor="upload-kitchen-image" className="cursor-pointer">
-                    <div className="flex flex-col items-center gap-2">
-                      <span className="text-orange-500 text-4xl">🏠</span>
-                      <p className="text-gray-700 font-medium">Upload Kitchen Image (Logo)</p>
-                      <p className="text-sm text-gray-500">Click or Drag & Drop</p>
-                    </div>
+                {/* Kitchen Logo Upload */}
+                <div className="relative flex flex-col items-center justify-center border-2 border-dashed border-orange-500 rounded-xl p-6 text-center cursor-pointer bg-gray-50 hover:bg-orange-50 transition-all">
+                  <label htmlFor="kitchenLogo">
+                    <span className="text-orange-500 text-4xl">🏠</span>
+                    <p className="text-gray-700 font-medium">Upload Kitchen Logo</p>
                   </label>
-                  <input type="file" className="hidden" id="upload-kitchen-image" />
-                </motion.div>
+                  <input type="file" id="kitchenLogo" className="hidden" onChange={(e) => handleFileUpload(e, "kitchenLogo")} />
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  onClick={handleSubmitKitchen}
+                  className="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition-all"
+                >
+                  Done
+                </button>
               </div>
-
             )}
+
           </motion.div>
         </AnimatePresence>
 
         {/* Navigation buttons */}
         <div className="flex justify-between mt-8">
-          {step > 1 && (
+          {/* {step > 1 && (
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -391,9 +459,9 @@ const ChefRegisterPage = () => {
             >
               Back
             </motion.button>
-          )}
+          )} */}
 
-          {step < 3 ? (
+          {/* {step < 3 ? (
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -411,7 +479,7 @@ const ChefRegisterPage = () => {
             >
               Submit
             </motion.button>
-          )}
+          )} */}
         </div>
       </motion.div>
 
