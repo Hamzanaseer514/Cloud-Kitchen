@@ -32,6 +32,14 @@ const UserSchema = new mongoose.Schema({
       message: props => `${props.value} is not a valid phone number!`
     }
   },
+  address:{
+    type: String,
+    rdefault : ""
+  },
+  isUserChef:{
+    type: Boolean,
+    default: false
+  },
   role: {
     type: String,
     enum: ['customer', 'chef', 'rider', 'admin'],

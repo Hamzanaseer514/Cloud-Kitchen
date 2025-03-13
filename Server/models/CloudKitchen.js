@@ -1,5 +1,32 @@
 import mongoose from "mongoose";
 
+// Embedded Schema for Menus
+const MenuSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  price: {
+    type: Number,
+    required: true,
+  },
+  category: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  description: {
+    type: String,
+    default: "",
+  },
+  image: {
+    type: String, // Menu item image URL
+    default: "",
+  },
+});
+
+// Kitchen Schema
 const KitchenSchema = new mongoose.Schema(
   {
     kitchenName: {
@@ -45,6 +72,10 @@ const KitchenSchema = new mongoose.Schema(
     rating: {
       type: Number,
       default: 0,
+    },
+    menus: {
+      type: [MenuSchema], // 👈 Now menus is an array of objects
+      default: [],
     },
   },
   { timestamps: true }

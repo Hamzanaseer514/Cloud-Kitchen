@@ -141,6 +141,7 @@ const ChefRegisterPage = () => {
       });
 
       const result = await response.json();
+      console.log("result", result);
       setLoading(false);
 
       if (response.ok) {

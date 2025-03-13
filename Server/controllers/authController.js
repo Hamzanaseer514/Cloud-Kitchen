@@ -35,12 +35,23 @@ exports.login = asyncHandler(async (req, res, next) => {
 
   // Check for user in database
   const user = await User.findOne({ email }).select('+password');
-  console.log("User from DB:", user);
-
+  console.log("User from DB:", user.role);
+  
   if (!user) {
     console.log("User not found in database");
     return next(new ErrorResponse('Invalid credentials', 401));
   }
+  // if (user.role === "chef") {
+  //   const kitchen = await Kitchen.findOne({ owner: user._id });
+
+  //   if (!kitchen) {
+  //     return next(new ErrorResponse("You don't have a registered kitchen!", 403));
+  //   }
+
+  //   if (kitchen.approve !== "yes") {
+  //     return next(new ErrorResponse("Your kitchen is not approved yet!", 403));
+  //   }
+  // }
 
   // Check if password matches
   const isMatch = await user.matchPassword(password);
@@ -107,4 +118,36 @@ const sendTokenResponse = (user, statusCode, res) => {
       }
     });
 };
+
+exports.updateProfile = asyncHandler(async (req, res, next) => {
+  const { fullname, address, phone } = req.body;
+
+  // Allowed fields only
+  const updatedFields = {};
+  if (fullname) updatedFields.fullname = fullname;
+  if (address) updatedFields.address = address;
+  if (phone) updatedFields.phone = phone;
+
+  // Update user profile
+  const user = await User.findByIdAndUpdate(req.user.id, updatedFields, {
+    new: true,
+    runValidators: true,
+  });
+
+  if (!user) {
+    return next(new ErrorResponse("User not found", 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "Profile updated successfully!",
+    data: {
+      id: user._id,
+      fullname: user.fullname,
+      address: user.address,
+      phone: user.phone,
+    },
+  });
+});
+
 

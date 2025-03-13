@@ -1,4 +1,5 @@
 import Kitchen from "../models/CloudKitchen.js";
+// const Kitchen = require("../models/CloudKitchen");
 
 // ✅ Register a new kitchen
 export const registerKitchen = async (req, res) => {
@@ -19,6 +20,8 @@ export const registerKitchen = async (req, res) => {
       if (!kitchenName  || !openingTime || !closingTime || !specification) {
         return res.status(400).json({ status: false, message: "Required fields are missing!" });
       }
+
+      let menues = [];
   
       // Create new kitchen
       const newKitchen = new Kitchen({
@@ -32,9 +35,11 @@ export const registerKitchen = async (req, res) => {
         status,
         approve,
         rating,
+        menues
       });
   
       await newKitchen.save();
+
       res.status(201).json({ status: true, message: "Kitchen registered successfully!", kitchen: newKitchen });
   
     } catch (error) {
@@ -46,6 +51,7 @@ export const registerKitchen = async (req, res) => {
 // ✅ Get all kitchens
 export const getAllKitchens = async (req, res) => {
   try {
+
     const kitchens = await Kitchen.find().populate("owner", "fullname email");
     res.status(200).json(kitchens);
   } catch (error) {
@@ -68,6 +74,7 @@ export const getKitchenById = async (req, res) => {
 
 // ✅ Update kitchen
 export const updateKitchen = async (req, res) => {
+  console.log("hamza i am update")
   try {
     const updatedKitchen = await Kitchen.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updatedKitchen) {
