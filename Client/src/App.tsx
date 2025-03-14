@@ -20,7 +20,7 @@ import CustomizeOrder from './Dashboard/chefdashboard/pages/CustomizeOrder';
 import DeliveryPartners from './Dashboard/chefdashboard/pages/DeliveryPartners';
 import MenuUpload from './Dashboard/chefdashboard/pages/MenuUpload';
 import AdminDashboardLayout from './Dashboard/admindashboard/layout/AdminDashboardLayout';
-import KitchenApproval from './Dashboard/admindashboard/pages/KitchenApproval';
+import KitchenApproval from './Dashboard/admindashboard/pages/KitchenApproval.jsx';
 import DeliveryPartnerApproval from './Dashboard/admindashboard/pages/DeliveryPartnersApproval';
 import Users from './Dashboard/admindashboard/pages/Users';
 import AdminSettings from './Dashboard/admindashboard/pages/AdminSettings';

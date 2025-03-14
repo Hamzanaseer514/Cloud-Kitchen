@@ -14,7 +14,7 @@ export function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
   const menuItems = [
     { icon: Home, label: 'Dashboard', path: '/admin-dashboard' },
     { icon: CookingPot, label: 'Kitchen Approval', path: '/admin-dashboard/kitchen-approval' },
-    { icon: Handshake, label: 'Delivery Partner Approval', path: '/admin-dashboard/deliverypartner-approval' },
+    { icon: Handshake, label: 'Add Delivery Boy', path: '/admin-dashboard/deliverypartner-approval' },
     { icon: Users, label: 'User', path: '/admin-dashboard/users' },
     { icon: Settings, label: 'Settings', path: '/admin-dashboard/settings' },
 
