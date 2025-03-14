@@ -81,11 +81,11 @@ const RegisterForm: React.FC = () => {
       )}
       
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        {/* <label className="block text-sm font-medium text-gray-700 mb-1">
           I want to join as:
-        </label>
+        </label> */}
         <div className="grid grid-cols-2 gap-4">
-          <button
+          {/* <button
             type="button"
             className={`py-3 px-4 border rounded-md flex items-center justify-center ${
               selectedRole === 'customer'
@@ -96,7 +96,7 @@ const RegisterForm: React.FC = () => {
           >
             <User className="h-5 w-5 mr-2" />
             Customer
-          </button>
+          </button> */}
           {/* <button
             type="button"
             className={`py-3 px-4 border rounded-md flex items-center justify-center ${
@@ -112,7 +112,7 @@ const RegisterForm: React.FC = () => {
             </svg>
             Chef
           </button> */}
-          <button
+          {/* <button
             type="button"
             className={`py-3 px-4 border rounded-md flex items-center justify-center ${
               selectedRole === 'rider'
@@ -125,7 +125,7 @@ const RegisterForm: React.FC = () => {
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path>
             </svg>
             Rider
-          </button>
+          </button> */}
         </div>
       </div>
       

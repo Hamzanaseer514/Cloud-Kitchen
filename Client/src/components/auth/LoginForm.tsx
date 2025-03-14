@@ -49,8 +49,15 @@ const LoginForm: React.FC = () => {
   
       // Assuming the API returns a token and user data
       await login(result.user);
-  
-      navigate("/");
+      if(result.user.role === 'admin'){
+        navigate("/admin-dashboard");
+      }
+      else if(result.user.role === 'chef'){
+        navigate("/chef-dashboard");
+      }
+      else{
+        navigate("/");
+      }
     } catch (err: any) {
       setError(err.message || "Login failed. Please try again.");
     } finally {
