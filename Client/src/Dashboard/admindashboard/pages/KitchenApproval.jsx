@@ -33,25 +33,33 @@ export function KitchenApproval() {
     try {
       const kitchen = kitchens.find(k => k._id === id);
       const newStatus = kitchen.approve.trim().toLowerCase() === "yes" ? "no" : "yes";
-      
-      // Optimistic update
-      setKitchens(kitchens.map(kitchen => 
-        kitchen._id === id ? { ...kitchen, approve: newStatus } : kitchen
+  
+      // ✅ Optimistic UI Update
+      setKitchens(kitchens.map(k => 
+        k._id === id ? { ...k, approve: newStatus } : k
       ));
-
-      // TODO: Add your API call here to update the status
-      // const response = await fetch(`${API_URL}/${id}`, {
-      //   method: 'PATCH',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ approve: newStatus })
-      // });
-      
+  
+      // ✅ Backend API Call
+      const response = await fetch(`http://localhost:5000/api/kitchen/updatekitchen/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' ,
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ approve: newStatus }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to update kitchen status");
+      }
+  
     } catch (error) {
       console.error("Error updating status:", error);
-      // Revert on error
+  
+      // ❌ Revert UI on Failure
       setKitchens(prevKitchens => [...prevKitchens]);
     }
   };
+  
 
   if (loading) {
     return (

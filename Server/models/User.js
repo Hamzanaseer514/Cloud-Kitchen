@@ -34,7 +34,7 @@ const UserSchema = new mongoose.Schema({
   },
   address:{
     type: String,
-    rdefault : ""
+    default : ""
   },
   isUserChef:{
     type: Boolean,

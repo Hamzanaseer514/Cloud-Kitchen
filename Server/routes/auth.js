@@ -4,7 +4,9 @@ const {
   login,
   getMe,
   logout,
-  updateProfile
+  updateProfile,
+  registerRider 
+  
 } = require('../controllers/authController');
 
 const router = express.Router();
@@ -16,6 +18,7 @@ router.post('/login', login);
 router.get('/me', protect, getMe);
 router.get('/logout', logout);
 router.put("/updateprofile", protect, updateProfile);
+router.post("/registerrider", registerRider);
 
 
 module.exports = router;

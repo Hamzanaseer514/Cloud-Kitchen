@@ -21,10 +21,11 @@ import DeliveryPartners from './Dashboard/chefdashboard/pages/DeliveryPartners';
 import MenuUpload from './Dashboard/chefdashboard/pages/MenuUpload';
 import AdminDashboardLayout from './Dashboard/admindashboard/layout/AdminDashboardLayout';
 import KitchenApproval from './Dashboard/admindashboard/pages/KitchenApproval.jsx';
-import DeliveryPartnerApproval from './Dashboard/admindashboard/pages/DeliveryPartnersApproval';
+// import DeliveryPartnerApproval from './Dashboard/admindashboard/pages/DeliveryPartnersApproval';
 import Users from './Dashboard/admindashboard/pages/Users';
-import AdminSettings from './Dashboard/admindashboard/pages/AdminSettings';
+import {AdminSettings} from './Dashboard/admindashboard/pages/AdminSettings';
 import AdminDashboard from './Dashboard/admindashboard/pages/AdminDashboard';
+import AddRider from './Dashboard/admindashboard/pages/AddRider';
 
 
 
@@ -46,13 +47,15 @@ const AppContent: React.FC = () => {
     "/admin-dashboard/deliverypartner-approval",
     "/admin-dashboard/users",
     "/admin-dashboard/settings",
+    "/admin-dashboard/add-rider"
     
   ];
 
   return (
     <div className="flex flex-col min-h-screen relative">
       {/* Hide Navbar for Dashboard Pages */}
-      {!location.pathname.startsWith("/chef-dashboard") && !location.pathname.startsWith("/admin-dashboard") && <Navbar />}
+      {/* {!location.pathname.startsWith("/chef-dashboard") && !location.pathname.startsWith("/admin-dashboard") && <Navbar />} */}
+      <Navbar/>
 
       <main className="flex-grow">
         <Routes>
@@ -80,9 +83,10 @@ const AppContent: React.FC = () => {
         <Route path="/admin-dashboard/*" element={<AdminDashboardLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="kitchen-approval" element={<KitchenApproval />} />
-          <Route path="deliverypartner-approval" element={<DeliveryPartnerApproval />} />
+          {/* <Route path="deliverypartner-approval" element={<DeliveryPartnerApproval />} /> */}
           <Route path="users" element={<Users />} />
           <Route path="settings" element={<AdminSettings />} />
+          <Route path="add-rider" element={<AddRider />} />
          
 
         </Route> 

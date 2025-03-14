@@ -1,18 +1,19 @@
 const User = require('../models/User');
+const Rider = require('../models/Rider');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
-const { chkChefKitchen } = require("./CloudKitchen"); 
+const { chkChefKitchen } = require("./CloudKitchen");
 // @desc    Register user
 // @route   POST /api/auth/register
 // @access  Public
 exports.register = asyncHandler(async (req, res, next) => {
   let accountstatus;
   const { fullname, email, password, phone, role } = req.body;
-  if (role === "customer") {
+  if (role === "customer" || role === "rider") {
     accountstatus = "active";
   }
-  else if (role === "chef" || role === "rider") {
-    accountstatus = "inactive";
+  else if (role === "chef") {
+    accountstatus = "active";
   }
   console.log(req.body);
   // Create user
@@ -24,6 +25,21 @@ exports.register = asyncHandler(async (req, res, next) => {
     role,
     accountstatus
   });
+
+  if (user.role === "rider") {
+    const { vehicle, license } = req.body;
+    const rider = await Rider.create({
+      userid: user._id,
+        vehicle,
+      license
+    });
+    if (!rider) {
+      return next(new ErrorResponse('Rider not created', 400));
+    }
+    res.status(201).json({ success: true, data: rider });
+  }
+
+
 
   sendTokenResponse(user, 201, res);
 });
@@ -158,5 +174,31 @@ exports.updateProfile = asyncHandler(async (req, res, next) => {
     },
   });
 });
+
+
+exports.registerRider = asyncHandler(async (req, res, next) => {
+  let accountstatus = "active";
+  const { fullname, email, password, phone, role, vehicle, license } = req.body;
+  const user = await User.create({
+    fullname,
+    email,
+    password,
+    phone,
+    role,
+    accountstatus
+  });
+  if (!user) {
+    return next(new ErrorResponse('User not created',
+      400));
+  }
+  const rider = await Rider.create({
+    userid: user._id,
+    vehicle,
+    license
+  });
+
+  sendTokenResponse(rider, 201, res);
+}
+);
 
 

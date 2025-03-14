@@ -1,61 +1,129 @@
+import { useState } from 'react';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  TimeScale
+} from 'chart.js';
+import { Line, Bar } from 'react-chartjs-2';
+
+// Register required Chart.js components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  TimeScale
+);
+
+// Sample data for analytics
+const analyticsData = {
+  orders: {
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    datasets: [{
+      label: 'Orders',
+      data: [65, 59, 80, 81, 56, 55, 40],
+      borderColor: '#4F46E5',
+      tension: 0.4,
+      fill: true,
+      backgroundColor: 'rgba(79, 70, 229, 0.1)',
+    }]
+  },
+  revenue: {
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    datasets: [{
+      label: 'Revenue ($)',
+      data: [4500, 4200, 4800, 4600, 4100, 4000, 3800],
+      backgroundColor: 'rgba(16, 185, 129, 0.8)',
+      borderRadius: 8,
+    }]
+  }
+};
+
 export function Dashboard() {
   const stats = [
-    { label: 'Active Orders', value: '24' },
-    { label: 'Completed Today', value: '156' },
-    { label: 'Team Members', value: '12' },
-    { label: 'Average Rating', value: '4.8' },
+    { label: 'Active Orders', value: '24', change: '+12%', trend: 'up' },
+    { label: 'Completed Today', value: '156', change: '-8%', trend: 'down' },
+    { label: 'Team Members', value: '12', change: '+4%', trend: 'up' },
+    { label: 'Average Rating', value: '4.8', change: '-2%', trend: 'down' },
   ];
 
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top' as const,
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        grid: {
+          display: false,
+        },
+      },
+      x: {
+        grid: {
+          display: false,
+        },
+      },
+    },
+  };
+
   return (
-    <div className="p-6 space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat) => (
-          <div
+    <div className="min-h-screen bg-gray-100">
+      {/* Analytics Info */}
+      <div className="container mx-auto px-6 py-4">
+        <p className="text-lg font-semibold text-gray-700">Analytics data is from last week. It updates every week.</p>
+      </div>
+
+      {/* Stats Section */}
+      <section className="container mx-auto px-6 py-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {stats.map(stat => (
+          <div 
             key={stat.label}
-            className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow"
+            className="bg-white p-6 rounded-xl shadow-md transition-transform transform hover:-translate-y-1"
           >
             <p className="text-gray-500 text-sm">{stat.label}</p>
-            <p className="text-2xl font-bold text-gray-800 mt-2">{stat.value}</p>
+            <div className="flex justify-between items-center mt-2">
+              <p className="text-3xl font-bold text-gray-800">{stat.value}</p>
+              <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                stat.trend === 'up' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
+              }`}>
+                {stat.change} {stat.trend === 'up' ? '↑' : '↓'}
+              </span>
+            </div>
           </div>
         ))}
-      </div>
+      </section>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Recent Orders</h2>
-          <div className="space-y-4">
-            {[1, 2, 3].map((order) => (
-              <div key={order} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                <div>
-                  <p className="font-medium text-gray-800">Order #{order}234</p>
-                  <p className="text-sm text-gray-500">Table 12 • 3 items</p>
-                </div>
-                <span className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm">
-                  In Progress
-                </span>
-              </div>
-            ))}
+      {/* Analytics Section */}
+      <section className="container mx-auto px-6 py-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white p-6 rounded-xl shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Orders Trend</h2>
+          <div className="h-64">
+            <Line data={analyticsData.orders} options={chartOptions} />
           </div>
         </div>
-
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Today's Schedule</h2>
-          <div className="space-y-4">
-            {[
-              { time: '09:00 AM', task: 'Morning Prep' },
-              { time: '11:30 AM', task: 'Lunch Service' },
-              { time: '03:00 PM', task: 'Inventory Check' },
-            ].map((schedule, index) => (
-              <div key={index} className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
-                <div className="w-24 text-sm font-medium text-gray-600">{schedule.time}</div>
-                <div className="flex-1">
-                  <p className="font-medium text-gray-800">{schedule.task}</p>
-                </div>
-              </div>
-            ))}
+        <div className="bg-white p-6 rounded-xl shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Revenue Analysis</h2>
+          <div className="h-64">
+            <Bar data={analyticsData.revenue} options={chartOptions} />
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
