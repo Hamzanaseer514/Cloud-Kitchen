@@ -46,7 +46,7 @@ const RegisterForm: React.FC = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...userData, role: selectedRole }),
+        body: JSON.stringify({ ...userData, role: "customer" }),
       });
   
       const result = await response.json();

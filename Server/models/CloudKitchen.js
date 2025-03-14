@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 // Embedded Schema for Menus
 const MenuSchema = new mongoose.Schema({
@@ -74,7 +74,7 @@ const KitchenSchema = new mongoose.Schema(
       default: 0,
     },
     menus: {
-      type: [MenuSchema], // 👈 Now menus is an array of objects
+      type: [MenuSchema], // 👈 Array of menu items
       default: [],
     },
   },
@@ -82,4 +82,6 @@ const KitchenSchema = new mongoose.Schema(
 );
 
 const Kitchen = mongoose.model("Kitchen", KitchenSchema);
-export default Kitchen;
+
+// ✅ CommonJS Export
+module.exports = Kitchen;

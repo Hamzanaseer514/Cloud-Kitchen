@@ -1,12 +1,19 @@
 const User = require('../models/User');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
-
+const { chkChefKitchen } = require("./CloudKitchen"); 
 // @desc    Register user
 // @route   POST /api/auth/register
 // @access  Public
 exports.register = asyncHandler(async (req, res, next) => {
+  let accountstatus;
   const { fullname, email, password, phone, role } = req.body;
+  if (role === "customer") {
+    accountstatus = "active";
+  }
+  else if (role === "chef" || role === "rider") {
+    accountstatus = "inactive";
+  }
   console.log(req.body);
   // Create user
   const user = await User.create({
@@ -14,7 +21,8 @@ exports.register = asyncHandler(async (req, res, next) => {
     email,
     password,
     phone,
-    role
+    role,
+    accountstatus
   });
 
   sendTokenResponse(user, 201, res);
@@ -36,22 +44,23 @@ exports.login = asyncHandler(async (req, res, next) => {
   // Check for user in database
   const user = await User.findOne({ email }).select('+password');
   console.log("User from DB:", user.role);
-  
+
   if (!user) {
     console.log("User not found in database");
     return next(new ErrorResponse('Invalid credentials', 401));
   }
-  // if (user.role === "chef") {
-  //   const kitchen = await Kitchen.findOne({ owner: user._id });
 
-  //   if (!kitchen) {
-  //     return next(new ErrorResponse("You don't have a registered kitchen!", 403));
-  //   }
-
-  //   if (kitchen.approve !== "yes") {
-  //     return next(new ErrorResponse("Your kitchen is not approved yet!", 403));
-  //   }
+  // if(user.accountstatus === "inactive"){
+  //   console.log("User account is inactive");
+  //   return next(new ErrorResponse('Your account status is pending, please ask the admin to approve', 401));
   // }
+  if (user.role === "chef") {
+    const chkChef = await chkChefKitchen(user._id); // ✅ Await added
+    if (chkChef === false) {
+      console.log("User is Chef but has no approved kitchen");
+      return next(new ErrorResponse('Invalid credentials', 401));
+    }
+  }
 
   // Check if password matches
   const isMatch = await user.matchPassword(password);

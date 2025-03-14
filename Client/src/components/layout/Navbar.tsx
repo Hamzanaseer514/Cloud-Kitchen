@@ -78,7 +78,7 @@ const Navbar: React.FC = () => {
                   </button>
                   <div className="absolute right-0 w-48 mt-2 origin-top-right bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
                     <div className="px-4 py-3">
-                      <p className="text-sm">Signed in as</p>
+                      <p className="text-sm">Signed in as {user?.role}</p>
                       <p className="text-sm font-medium truncate">{user?.email}</p>
                     </div>
                     <div className="py-1">

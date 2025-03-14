@@ -1,57 +1,54 @@
-import Kitchen from "../models/CloudKitchen.js";
-// const Kitchen = require("../models/CloudKitchen");
+const Kitchen = require("../models/CloudKitchen");
 
 // ✅ Register a new kitchen
-export const registerKitchen = async (req, res) => {
-    try {
-      const {
-        kitchenName,
-        openingTime,
-        closingTime,
-        specification,
-        userImage,
-        kitchenLogo,
-        approve,
-        status,
-        rating,
-      } = req.body;
-  
-      // Validation
-      if (!kitchenName  || !openingTime || !closingTime || !specification) {
-        return res.status(400).json({ status: false, message: "Required fields are missing!" });
-      }
+const registerKitchen = async (req, res) => {
+  try {
+    const {
+      kitchenName,
+      openingTime,
+      closingTime,
+      specification,
+      userImage,
+      kitchenLogo,
+      approve,
+      status,
+      rating,
+    } = req.body;
 
-      let menues = [];
-  
-      // Create new kitchen
-      const newKitchen = new Kitchen({
-        kitchenName,
-        owner:req.user.id,
-        openingTime,
-        closingTime,
-        specification,
-        userImage:"hamza.jpg",
-        kitchenLogo:"logo.jpg",
-        status,
-        approve,
-        rating,
-        menues
-      });
-  
-      await newKitchen.save();
-
-      res.status(201).json({ status: true, message: "Kitchen registered successfully!", kitchen: newKitchen });
-  
-    } catch (error) {
-      res.status(500).json({ status: false, message: "Server error!", error: error.message });
+    // Validation
+    if (!kitchenName || !openingTime || !closingTime || !specification) {
+      return res.status(400).json({ status: false, message: "Required fields are missing!" });
     }
-  };
-  
+
+    let menues = [];
+
+    // Create new kitchen
+    const newKitchen = new Kitchen({
+      kitchenName,
+      owner: req.user.id,
+      openingTime,
+      closingTime,
+      specification,
+      userImage: "hamza.jpg",
+      kitchenLogo: "logo.jpg",
+      status,
+      approve,
+      rating,
+      menues,
+    });
+
+    await newKitchen.save();
+
+    res.status(201).json({ status: true, message: "Kitchen registered successfully!", kitchen: newKitchen });
+
+  } catch (error) {
+    res.status(500).json({ status: false, message: "Server error!", error: error.message });
+  }
+};
 
 // ✅ Get all kitchens
-export const getAllKitchens = async (req, res) => {
+const getAllKitchens = async (req, res) => {
   try {
-
     const kitchens = await Kitchen.find().populate("owner", "fullname email");
     res.status(200).json(kitchens);
   } catch (error) {
@@ -60,7 +57,7 @@ export const getAllKitchens = async (req, res) => {
 };
 
 // ✅ Get single kitchen by ID
-export const getKitchenById = async (req, res) => {
+const getKitchenById = async (req, res) => {
   try {
     const kitchen = await Kitchen.findById(req.params.id).populate("owner", "fullname email");
     if (!kitchen) {
@@ -73,8 +70,8 @@ export const getKitchenById = async (req, res) => {
 };
 
 // ✅ Update kitchen
-export const updateKitchen = async (req, res) => {
-  console.log("hamza i am update")
+const updateKitchen = async (req, res) => {
+  console.log("hamza i am update");
   try {
     const updatedKitchen = await Kitchen.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updatedKitchen) {
@@ -87,7 +84,7 @@ export const updateKitchen = async (req, res) => {
 };
 
 // ✅ Delete kitchen
-export const deleteKitchen = async (req, res) => {
+const deleteKitchen = async (req, res) => {
   try {
     const deletedKitchen = await Kitchen.findByIdAndDelete(req.params.id);
     if (!deletedKitchen) {
@@ -97,4 +94,29 @@ export const deleteKitchen = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Server error!", error: error.message });
   }
+};
+
+// ✅ Check if chef has a kitchen and it's approved
+const chkChefKitchen = async (chefid) => {
+  try {
+    const kitchen = await Kitchen.findOne({ owner: chefid });
+
+    if (!kitchen || kitchen.approve === "no") {
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+// ✅ CommonJS Export
+module.exports = {
+  registerKitchen,
+  getAllKitchens,
+  getKitchenById,
+  updateKitchen,
+  deleteKitchen,
+  chkChefKitchen,
 };
