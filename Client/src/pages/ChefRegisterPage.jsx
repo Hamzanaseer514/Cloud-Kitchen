@@ -5,6 +5,8 @@ import { Navigate, useNavigate } from "react-router-dom";
 const ChefRegisterPage = () => {
   const [step, setStep] = useState(1);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [userImage, setUserImage] = useState(null);
+  const [kitchenLogo, setKitchenLogo] = useState(null);
   const navigate = useNavigate();
 
   const nextStep = () => setStep((prev) => Math.min(prev + 1, 3));
@@ -67,8 +69,9 @@ const ChefRegisterPage = () => {
     try {
       const response = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
-        headers: { "Content-Type": "application/json"
-        
+        headers: {
+          "Content-Type": "application/json"
+
         },
         body: JSON.stringify(formData),
       });
@@ -120,28 +123,72 @@ const ChefRegisterPage = () => {
     if (validateKitchenForm()) {
       setStep(3);
     }
+ 
   };
-  const handleFileUpload = (e, field) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setKitchenData({ ...kitchenData, [field]: imageUrl });
+
+  const handleFileUpload = (event, type) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (type === "userImage") {
+      setUserImage(file);
+    } else if (type === "kitchenLogo") {
+      setKitchenLogo(file);
     }
   };
 
+
   const handleSubmitKitchen = async () => {
+    if (!userImage || !kitchenLogo) {
+      alert("Please upload both images first!");
+      return;
+    }
+
     setLoading(true);
+
     try {
+      // Step 1: Upload User Image
+      const userImageFormData = new FormData();
+      userImageFormData.append("image", userImage);
+
+      const userImageResponse = await fetch("http://localhost:5000/uploadimage", {
+        method: "POST",
+        body: userImageFormData,
+      });
+
+      const userImageResult = await userImageResponse.json();
+      if (!userImageResponse.ok) throw new Error("User image upload failed");
+
+      // Step 2: Upload Kitchen Logo
+      const kitchenLogoFormData = new FormData();
+      kitchenLogoFormData.append("image", kitchenLogo);
+
+      const kitchenLogoResponse = await fetch("http://localhost:5000/uploadimage", {
+        method: "POST",
+        body: kitchenLogoFormData,
+      });
+
+      const kitchenLogoResult = await kitchenLogoResponse.json();
+      if (!kitchenLogoResponse.ok) throw new Error("Kitchen logo upload failed");
+
+      // Step 3: Update kitchenData with Image URLs
+      const updatedKitchenData = {
+        ...kitchenData,
+        userImage: userImageResult.image_url,
+        kitchenLogo: kitchenLogoResult.image_url,
+      };
+
+      // Step 4: Send Final Create Kitchen API Request
       const response = await fetch("http://localhost:5000/api/kitchen/create", {
         method: "POST",
-        headers: { "Content-Type": "application/json" ,
-            "Authorization": `Bearer ${localStorage.getItem("token")}`
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify(kitchenData),
+        body: JSON.stringify(updatedKitchenData),
       });
 
       const result = await response.json();
-      console.log("result", result);
       setLoading(false);
 
       if (response.ok) {
@@ -151,9 +198,10 @@ const ChefRegisterPage = () => {
       }
     } catch (error) {
       setLoading(false);
-      setKitchenErrors({ apiError: "Network error, try again later" });
+      setKitchenErrors({ apiError: error.message || "Network error, try again later" });
     }
   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-white relative">
@@ -419,21 +467,37 @@ const ChefRegisterPage = () => {
                 </h2>
 
                 {/* User Image Upload */}
-                <div className="relative flex flex-col items-center justify-center border-2 border-dashed border-orange-500 rounded-xl p-6 text-center cursor-pointer bg-gray-50 hover:bg-orange-50 transition-all">
-                  <label htmlFor="userImage">
-                    <span className="text-orange-500 text-4xl">📷</span>
-                    <p className="text-gray-700 font-medium">Upload Your Picture</p>
-                  </label>
-                  <input type="file" id="userImage" className="hidden" onChange={(e) => handleFileUpload(e, "userImage")} />
+                <div className="flex items-center gap-6">
+                  <div className="relative  w-full flex flex-col items-center justify-center border-2 border-dashed border-orange-500 rounded-xl p-6 text-center cursor-pointer bg-gray-50 hover:bg-orange-50 transition-all">
+                    <label htmlFor="userImage">
+                      <span className="text-orange-500 text-4xl">📷</span>
+                      <p className="text-gray-700 font-medium">Upload Your Picture</p>
+                    </label>
+                    <input type="file" id="userImage" className="hidden" onChange={(e) => handleFileUpload(e, "userImage")} />
+                  </div>
+                  <img
+                    className="w-24 h-24 object-cover rounded-lg mr-4"
+                    src={userImage ? URL.createObjectURL(userImage) : "https://w7.pngwing.com/pngs/184/113/png-transparent-user-profile-computer-icons-profile-heroes-black-silhouette-thumbnail.png"}
+                    alt="User Image"
+                  />
                 </div>
-
+                
                 {/* Kitchen Logo Upload */}
-                <div className="relative flex flex-col items-center justify-center border-2 border-dashed border-orange-500 rounded-xl p-6 text-center cursor-pointer bg-gray-50 hover:bg-orange-50 transition-all">
+                <div className="flex gap-6 items-center">
+
+                <div className="relative w-full flex flex-col items-center justify-center border-2 border-dashed border-orange-500 rounded-xl p-6 text-center cursor-pointer bg-gray-50 hover:bg-orange-50 transition-all">
                   <label htmlFor="kitchenLogo">
                     <span className="text-orange-500 text-4xl">🏠</span>
                     <p className="text-gray-700 font-medium">Upload Kitchen Logo</p>
                   </label>
                   <input type="file" id="kitchenLogo" className="hidden" onChange={(e) => handleFileUpload(e, "kitchenLogo")} />
+                </div>
+                
+                <img
+                  className="w-24 h-24 object-cover rounded-lg mr-4"
+                  src={kitchenLogo ? URL.createObjectURL(kitchenLogo) : 'https://w7.pngwing.com/pngs/408/758/png-transparent-cooking-chef-s-hat-restaurant-chef-professional-cooking-knife-kitchen-utensils-icon-logo.png'}
+                  alt="kitchen Logo"
+                />
                 </div>
 
                 {/* Submit Button */}
@@ -529,6 +593,7 @@ const ChefRegisterPage = () => {
       `}</style>
     </div>
   );
-};
+}
+
 
 export default ChefRegisterPage;

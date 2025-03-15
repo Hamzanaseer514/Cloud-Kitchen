@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { ChefHat, Home, Users, Settings, Menu, X,Handshake,CookingPot,Bike } from 'lucide-react';
+import { ChefHat, Home, Users, Settings, Menu, X,CookingPot,Bike } from 'lucide-react';
 
 interface SidebarProps {
   isOpen: boolean;

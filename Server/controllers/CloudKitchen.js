@@ -14,6 +14,7 @@ const registerKitchen = async (req, res) => {
       status,
       rating,
     } = req.body;
+    console.log(kitchenLogo,userImage)
 
     // Validation
     if (!kitchenName || !openingTime || !closingTime || !specification) {
@@ -29,8 +30,8 @@ const registerKitchen = async (req, res) => {
       openingTime,
       closingTime,
       specification,
-      userImage: "hamza.jpg",
-      kitchenLogo: "logo.jpg",
+      userImage,
+      kitchenLogo,
       status,
       approve,
       rating,
