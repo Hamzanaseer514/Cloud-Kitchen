@@ -29,6 +29,13 @@ import AdminDashboard from './Dashboard/admindashboard/pages/AdminDashboard';
 import AddRider from './Dashboard/admindashboard/pages/AddRider';
 import ProtectedRoute from './components/auth/ProtectedRoute.js';
 import UnauthorizedPage from './components/auth/UnauthorizedPage.jsx';
+import KitchenMenu from './pages/KitchenMenu.jsx';
+
+import Earning from './Dashboard/riderdashboard/pages/Earning';
+import OrderHistory from './Dashboard/riderdashboard/pages/OrderHistory';
+import RiderSettings from './Dashboard/riderdashboard/pages/RiderSettings';
+import RiderDashboard from './Dashboard/riderdashboard/pages/RiderDashboard';
+import RiderDashboardLayout from './Dashboard/riderdashboard/layout/RiderDashboardLayout';
 
 
 
@@ -69,6 +76,11 @@ const AppContent: React.FC = () => {
           <Route path="/menu" element={<MenuPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/chef-register" element={<ChefRegisterPage />} />
+          <Route element={<ProtectedRoute requiredRole="customer" />}>
+            <Route path="/kitchen/:id" element={<KitchenMenu />} />
+          </Route>
+
+
 
           {/* chefdashboard Routes */}
           <Route element={<ProtectedRoute requiredRole={"chef"} />}>
@@ -97,12 +109,22 @@ const AppContent: React.FC = () => {
               <Route path="add-rider" element={<AddRider />} />
             </Route>
           </Route>
+
+          {/* Rider Dashboard Routes */}
+          <Route element={<ProtectedRoute requiredRole="rider" />}>
+            <Route path="/rider-dashboard/*" element={<RiderDashboardLayout />}>
+              <Route index element={<RiderDashboard />} />
+              <Route path="earning" element={<Earning />} />
+              <Route path="order-history" element={<OrderHistory />} />
+              <Route path="settings" element={<RiderSettings />} />
+            </Route>
+          </Route>
         </Routes>
 
       </main>
 
       {/* Hide Footer for Dashboard Pages */}
-      {!location.pathname.startsWith("/chef-dashboard") && !location.pathname.startsWith("/admin-dashboard") && <Footer />}
+      {!location.pathname.startsWith("/chef-dashboard") && !location.pathname.startsWith("/admin-dashboard") && !location.pathname.startsWith("/rider-dashboard") && <Footer />}
 
       {/* Chatbot - Only Show on Specific Routes */}
       {!hideChatbotRoutes.includes(location.pathname) && (

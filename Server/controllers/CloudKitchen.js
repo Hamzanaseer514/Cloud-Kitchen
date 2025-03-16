@@ -147,6 +147,20 @@ const AddMenu = async (req, res) => {
   }
 };
 
+const getKitchenMenus = async (req, res) => {
+  try {
+    const kitchen = await Kitchen.findById(req.params.id);
+
+    if (!kitchen) {
+      return res.status(404).json({ message: "Kitchen not found!" });
+    }
+
+    res.status(200).json(kitchen.menus);  // ✅ Only return the menus array
+  } catch (error) {
+    res.status(500).json({ message: "Server error!", error: error.message });
+  }
+};
+
 
 // ✅ CommonJS Export
 module.exports = {
@@ -156,5 +170,6 @@ module.exports = {
   updateKitchen,
   deleteKitchen,
   chkChefKitchen,
-  AddMenu
+  AddMenu,
+  getKitchenMenus
 };

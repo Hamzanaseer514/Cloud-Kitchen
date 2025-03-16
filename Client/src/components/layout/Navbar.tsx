@@ -26,13 +26,29 @@ const Navbar: React.FC = () => {
 
     switch (user.role) {
       case 'customer':
-        return '/customer/dashboard';
+        return '/customer-dashboard';
       case 'chef':
-        return '/chef/dashboard';
+        return '/chef-dashboard';
       case 'rider':
-        return '/rider/dashboard';
+        return '/rider-dashboard';
       case 'admin':
-        return '/admin/dashboard';
+        return '/admin-dashboard';
+      default:
+        return '/';
+    }
+  };
+  const getProfileLink = () => {
+    if (!user) return '/login';
+
+    switch (user.role) {
+      case 'customer':
+        return '/customer-dashboard';
+      case 'chef':
+        return '/chef-dashboard/settings';
+      case 'rider':
+        return '/rider-dashboard';
+      case 'admin':
+        return '/admin-dashboard/settings';
       default:
         return '/';
     }
@@ -92,7 +108,7 @@ const Navbar: React.FC = () => {
                         Dashboard
                       </Link>
                       <Link
-                        to="/profile"
+                        to={getProfileLink()}
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
                         Profile
@@ -200,7 +216,7 @@ const Navbar: React.FC = () => {
                 Dashboard
               </Link>
               <Link
-                to="/profile"
+                to={getProfileLink()}
                 className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-gray-50"
                 onClick={() => setIsMenuOpen(false)}
               >
