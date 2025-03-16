@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Star, Clock, Tag, ChefHat, Loader2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const KitchenMenu = () => {
     const { id } = useParams();
@@ -72,9 +73,11 @@ const KitchenMenu = () => {
     </div>
 
     {/* Customize Button Right Side */}
-    <button className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2 px-6 rounded-lg transition-all">
+   <Link to={`/kitchen/${id}/customize-food`}>
+   <button className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2 px-6 rounded-lg transition-all">
         Customize Your Food
     </button>
+   </Link>
 </div>
 
 

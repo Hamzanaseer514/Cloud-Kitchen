@@ -26,7 +26,7 @@ const customOrderSchema = new mongoose.Schema({
     },
     cookingMethod: { 
         type: String, 
-        enum: ["Grilled", "Fried", "Boiled", "Baked"], 
+        enum: ["Grilled", "Fried", "Boiled", "Baked","N/A"], 
         required: true 
     },
     servingSize: { 
@@ -34,10 +34,10 @@ const customOrderSchema = new mongoose.Schema({
         enum: ["Single", "Family", "Party Size"], 
         required: true 
     },
-    extraAddons: { 
-        type: [String], 
-        default: [] 
-    },
+    // extraAddons: { 
+    //     type: [String], 
+    //     default: [] 
+    // },
     specialInstructions: { 
         type: String, 
         default: "" 

@@ -56,6 +56,9 @@ const LoginForm: React.FC = () => {
       else if(result.user.role === 'chef'){
         navigate("/chef-dashboard");
       }
+      else if(result.user.role === 'rider'){
+        navigate("/rider-dashboard");
+      }
       else{
         navigate("/");
       }

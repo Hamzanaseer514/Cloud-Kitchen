@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ChefHat, ShoppingBag, User, Menu, X, LogOut } from 'lucide-react';
 import Button from '../ui/Button';
@@ -46,13 +46,15 @@ const Navbar: React.FC = () => {
       case 'chef':
         return '/chef-dashboard/settings';
       case 'rider':
-        return '/rider-dashboard';
+        return '/rider-dashboard/settings';
       case 'admin':
         return '/admin-dashboard/settings';
       default:
         return '/';
     }
   };
+
+ 
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">

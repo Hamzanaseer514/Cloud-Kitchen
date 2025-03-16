@@ -64,12 +64,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('cloudKitchenUser');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setIsLoading(false);
+    const handleStorageChange = () => {
+      const storedUser = localStorage.getItem('cloudKitchenUser');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+    };
+  
+    // Event listener add karein
+    window.addEventListener('storage', handleStorageChange);
+  
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
+  
   
   
 
@@ -87,8 +96,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       // // Remove password before storing
       // const { password: _, ...userWithoutPassword } = foundUser;
-      // setUser(user);
+      // setUser(JSON.parse(user));
       localStorage.setItem('cloudKitchenUser', JSON.stringify(user));
+      const storedUser = localStorage.getItem('cloudKitchenUser');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
     } catch (error) {
       console.error('Login error:', error);
       throw error;
