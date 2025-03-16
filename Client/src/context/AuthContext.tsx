@@ -64,13 +64,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is stored in localStorage
     const storedUser = localStorage.getItem('cloudKitchenUser');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
     setIsLoading(false);
   }, []);
+  
+  
 
   const login = async (user: object) => {
     setIsLoading(true);
@@ -86,7 +87,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       // // Remove password before storing
       // const { password: _, ...userWithoutPassword } = foundUser;
-      // setUser(userWithoutPassword as User);
+      // setUser(user);
       localStorage.setItem('cloudKitchenUser', JSON.stringify(user));
     } catch (error) {
       console.error('Login error:', error);
@@ -120,6 +121,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       setUser(newUser);
       localStorage.setItem('cloudKitchenUser', JSON.stringify(newUser));
+      // localStorage.setItem('token', 'fake-jwt-token');
     } catch (error) {
       console.error('Registration error:', error);
       throw error;
@@ -131,6 +133,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     setUser(null);
     localStorage.removeItem('cloudKitchenUser');
+    localStorage.removeItem('token');
   };
 
   return (

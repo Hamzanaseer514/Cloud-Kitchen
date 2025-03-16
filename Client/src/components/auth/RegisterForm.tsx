@@ -58,7 +58,7 @@ const RegisterForm: React.FC = () => {
       // Assuming registerUser is handling authentication context updates
       await registerUser(userData, data.password, selectedRole);
   
-      navigate("/");
+      navigate("/login");
     } catch (err: any) {
       setError(err.message || "Registration failed. Please try again.");
     } finally {

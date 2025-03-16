@@ -52,15 +52,33 @@ const ChefRegisterPage = () => {
   const validateForm = () => {
     let newErrors = {};
 
+    // Full Name Validation
     if (!formData.fullname) newErrors.fullname = "Full name required";
-    if (!formData.email) newErrors.email = "Email required";
-    if (!formData.phone) newErrors.phone = "Phone required";
+    
+    // Email Validation (Must end with @gmail.com)
+    if (!formData.email) {
+      newErrors.email = "Email required";
+    } else if (!formData.email.endsWith("@gmail.com")) {
+      newErrors.email = "Email must end with @gmail.com";
+    }
+    
+    // Phone Validation (Must start with 03 and be 11 digits)
+    if (!formData.phone) {
+      newErrors.phone = "Phone required";
+    } else if (!/^03\d{9}$/.test(formData.phone)) {
+      newErrors.phone = "Phone must start with 03 and be 11 digits long";
+    }
+    
+    // Password Validation
     if (!formData.password) newErrors.password = "Password required";
     if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = "Passwords do not match";
-
+    
+    // Set Errors
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0; // ✅ If no errors, return true
-  };
+    
+    // Return true if no errors
+    return Object.keys(newErrors).length === 0;
+  }    
 
   const handleNext = async () => {
     if (!validateForm()) return;
@@ -193,6 +211,7 @@ const ChefRegisterPage = () => {
 
       if (response.ok) {
         setShowSuccess(true);
+        localStorage.removeItem("token");
       } else {
         setKitchenErrors({ apiError: result.message || "Kitchen registration failed" });
       }

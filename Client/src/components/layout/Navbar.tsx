@@ -23,7 +23,7 @@ const Navbar: React.FC = () => {
 
   const getDashboardLink = () => {
     if (!user) return '/login';
-    
+
     switch (user.role) {
       case 'customer':
         return '/customer/dashboard';
@@ -61,7 +61,7 @@ const Navbar: React.FC = () => {
               About
             </Link>
 
-            {isAuthenticated ? (
+            {localStorage.getItem("token") ? (
               <>
                 <Link to="/cart" className="relative text-gray-700 hover:text-orange-600 px-3 py-2">
                   <ShoppingBag className="h-6 w-6" />
@@ -70,6 +70,9 @@ const Navbar: React.FC = () => {
                       {totalItems}
                     </span>
                   )}
+                </Link>
+                <Link to="/chef-register">
+                  <Button size="sm" variant="secondary">Register your Kitchen</Button>
                 </Link>
                 <div className="relative group">
                   <button className="flex items-center text-gray-700 hover:text-orange-600 px-3 py-2 rounded-md">
@@ -108,21 +111,21 @@ const Navbar: React.FC = () => {
               </>
             ) : (
               <>
+                <Link to="/chef-register">
+                  <Button size="sm" variant="secondary">Register your Kitchen</Button>
+                </Link>
                 <Link to="/login">
                   <Button variant="outline" size="sm" className='hover:bg-orange-500 hover:text-white hover:border-white border border-gray-500'>
                     Log in
                   </Button>
                 </Link>
-                <Link to="/chef-register">
-               <Button size="sm" variant="secondary">Register your Kitchen</Button>
-               </Link>
               </>
             )}
           </div>
 
           {/* Mobile menu button */}
           <div className="flex items-center md:hidden">
-            {isAuthenticated && (
+            {localStorage.getItem("token") && (
               <Link to="/cart" className="relative text-gray-700 mr-4">
                 <ShoppingBag className="h-6 w-6" />
                 {totalItems > 0 && (
@@ -173,7 +176,7 @@ const Navbar: React.FC = () => {
           </Link>
         </div>
         
-        {isAuthenticated ? (
+        {localStorage.getItem('token') ? (
           <div className="pt-4 pb-3 border-t border-gray-200">
             <div className="flex items-center px-5">
               <div className="flex-shrink-0">

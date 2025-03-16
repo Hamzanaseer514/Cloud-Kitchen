@@ -42,8 +42,9 @@ const LoginForm: React.FC = () => {
         throw new Error(result?.message || "Invalid email or password.");
       }
 
-      const {success, token} = result;
+      const {success, token,user} = result;
       if(success){
+        localStorage.setItem('cloudKitchenUser', JSON.stringify(user));
         localStorage.setItem('token', token);
       }
   

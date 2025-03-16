@@ -1,23 +1,16 @@
 import { useState } from "react";
 
 const MenuUpload = () => {
-  const [formData, setFormData] = useState<{
-    menuName: string;
-    category: string;
-    description: string;
-    price: string;
-    ingredients: string;
-    prepTime: string;
-    image: File | null;
-  }>({
+  const [formData, setFormData] = useState({
     menuName: "",
     category: "",
     description: "",
     price: "",
     ingredients: "",
-    prepTime: "",
-    image: null,
+    image: null as File | null,
   });
+
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -30,10 +23,101 @@ const MenuUpload = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Menu Data Submitted:", formData);
+  
+    // ✅ Trim and validate ingredients field
+    // const formattedIngredients = formData.ingredients
+    //   .split(",") // Comma se split karna
+    //   .map((item) => item.trim()) // Extra spaces remove karna
+    //   .filter((item) => item !== ""); // Empty values remove karna
+  
+    // if (formattedIngredients.length === 0) {
+    //   alert("Please enter at least one ingredient!");
+    //   return;
+    // }
+  
+    // ✅ Validation Check for Other Fields
+    if (!formData.menuName.trim()) {
+      alert("Menu name is required!");
+      return;
+    }
+    if (!formData.category) {
+      alert("Please select a category!");
+      return;
+    }
+    if (!formData.price) {
+      alert("Price is required!");
+      return;
+    }
+    if (!formData.image) {
+      alert("Please upload an image!");
+      return;
+    }
+  
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+  
+      if (!token) {
+        alert("User not authenticated!");
+        return;
+      }
+  
+      // ✅ Step 1: Upload Image and Get URL
+      const imageFormData = new FormData();
+      imageFormData.append("image", formData.image);
+  
+      const imageUploadResponse = await fetch("http://localhost:5000/uploadimage", {
+        method: "POST",
+        body: imageFormData,
+      });
+  
+      const imageResponse = await imageUploadResponse.json();
+      const imageUrl = imageResponse.image_url;
+  
+      // ✅ Step 2: Send Menu Data to Backend
+      const menuData = {
+        name: formData.menuName,
+        category: formData.category,
+        price: Number(formData.price),
+        description: formData.description,
+        ingredients: formData.ingredients, // Formatted ingredients
+        image: imageUrl,
+      };
+
+      console.log(menuData);
+  
+      const response = await fetch("http://localhost:5000/api/kitchen/addmenu", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(menuData),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to add menu");
+      }
+  
+      alert("Menu added successfully!");
+      setFormData({
+        menuName: "",
+        category: "",
+        description: "",
+        price: "",
+        ingredients: "",
+        image: null,
+      });
+    } catch (error) {
+      console.error("Error adding menu:", error);
+      alert("Failed to add menu!");
+    } finally {
+      setLoading(false);
+    }
   };
+  
 
   return (
     <div className="max-w-5xl mx-auto bg-white p-10 rounded-xl shadow-lg mt-10 border-t-4 border-orange-500">
@@ -43,7 +127,7 @@ const MenuUpload = () => {
       <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-6 mt-6">
         {/* Left Column */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">Menu Name</label>
+          <label className="block text-sm font-medium text-gray-700">Menu Name *</label>
           <input
             name="menuName"
             value={formData.menuName}
@@ -56,7 +140,7 @@ const MenuUpload = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Category</label>
+          <label className="block text-sm font-medium text-gray-700">Category *</label>
           <select
             name="category"
             value={formData.category}
@@ -74,7 +158,7 @@ const MenuUpload = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Price (PKR)</label>
+          <label className="block text-sm font-medium text-gray-700">Price (PKR) *</label>
           <input
             name="price"
             value={formData.price}
@@ -86,22 +170,21 @@ const MenuUpload = () => {
           />
         </div>
 
+        {/* ✅ Image Upload Field */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">Preparation Time (Minutes)</label>
+          <label className="block text-sm font-medium text-gray-700">Upload Image *</label>
           <input
-            name="prepTime"
-            value={formData.prepTime}
-            onChange={handleChange}
-            type="number"
-            placeholder="Enter preparation time"
-            className="mt-1 p-3 w-full border rounded-md focus:outline-none focus:border-orange-500"
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="mt-1 p-3 w-full border rounded-md focus:outline-none focus:border-orange-500 bg-white"
             required
           />
         </div>
 
         {/* Full Width Fields */}
         <div className="col-span-2">
-          <label className="block text-sm font-medium text-gray-700">Ingredients</label>
+          <label className="block text-sm font-medium text-gray-700">Ingredients *</label>
           <textarea
             name="ingredients"
             value={formData.ingredients}
@@ -109,6 +192,7 @@ const MenuUpload = () => {
             placeholder="List ingredients separated by commas"
             className="mt-1 p-3 w-full border rounded-md focus:outline-none focus:border-orange-500"
             rows={2}
+            required
           ></textarea>
         </div>
 
@@ -128,8 +212,9 @@ const MenuUpload = () => {
           <button
             type="submit"
             className="w-full bg-orange-600 text-white p-3 rounded-md hover:bg-orange-700 transition duration-300"
+            disabled={loading}
           >
-            Add Menu
+            {loading ? "Adding..." : "Add Menu"}
           </button>
         </div>
       </form>

@@ -1,15 +1,17 @@
 import React from 'react';
 import Hero from '../components/home/Hero';
 import FeaturedChefs from '../components/home/FeaturedChefs';
-import PopularDishes from '../components/home/PopularDishes';
+// import PopularDishes from '../components/home/PopularDishes';
 import HowItWorks from '../components/home/HowItWorks';
 import Testimonials from '../components/home/Testimonials';
+import PopularKitchens from '../components/home/PopularKitchens';
 
 const HomePage: React.FC = () => {
   return (
     <div>
       <Hero />
-      <PopularDishes />
+      {/* <PopularDishes /> */}
+      <PopularKitchens/>
       <HowItWorks />
       <FeaturedChefs />
       <Testimonials />

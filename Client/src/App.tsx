@@ -11,10 +11,11 @@ import ChefRegisterPage from './pages/ChefRegisterPage.jsx';
 import RegisterPage from './pages/RegisterPage';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import { KitchenProvider } from './context/KitchenContext.jsx';
 import ChefDashboardLayout from './Dashboard/chefdashboard/layout/ChefDashboardLayout';
-import {Dashboard} from './Dashboard/chefdashboard/pages/Dashboard';
-import {Orders} from './Dashboard/chefdashboard/pages/Orders';
-import {Settings} from './Dashboard/chefdashboard/pages/Settings';
+import { Dashboard } from './Dashboard/chefdashboard/pages/Dashboard';
+import { Orders } from './Dashboard/chefdashboard/pages/Orders';
+import { Settings } from './Dashboard/chefdashboard/pages/Settings';
 import Premium from './Dashboard/chefdashboard/pages/Premium';
 import CustomizeOrder from './Dashboard/chefdashboard/pages/CustomizeOrder';
 import DeliveryPartners from './Dashboard/chefdashboard/pages/DeliveryPartners';
@@ -23,9 +24,11 @@ import AdminDashboardLayout from './Dashboard/admindashboard/layout/AdminDashboa
 import KitchenApproval from './Dashboard/admindashboard/pages/KitchenApproval.jsx';
 // import DeliveryPartnerApproval from './Dashboard/admindashboard/pages/DeliveryPartnersApproval';
 import Users from './Dashboard/admindashboard/pages/Users';
-import {AdminSettings} from './Dashboard/admindashboard/pages/AdminSettings';
+import { AdminSettings } from './Dashboard/admindashboard/pages/AdminSettings';
 import AdminDashboard from './Dashboard/admindashboard/pages/AdminDashboard';
 import AddRider from './Dashboard/admindashboard/pages/AddRider';
+import ProtectedRoute from './components/auth/ProtectedRoute.js';
+import UnauthorizedPage from './components/auth/UnauthorizedPage.jsx';
 
 
 
@@ -34,9 +37,9 @@ import AddRider from './Dashboard/admindashboard/pages/AddRider';
 const AppContent: React.FC = () => {
   const location = useLocation();
   const hideChatbotRoutes: string[] = [
-    "/chef-register", "/login", "/register", 
-    "/chef-dashboard", "/chef-dashboard/orders", 
-    "/chef-dashboard/schedule", "/chef-dashboard/team", 
+    "/chef-register", "/login", "/register",
+    "/chef-dashboard", "/chef-dashboard/orders",
+    "/chef-dashboard/schedule", "/chef-dashboard/team",
     "/chef-dashboard/settings",
     "/chef-dashboard/premium",
     "/chef-dashboard/customizeorder",
@@ -48,14 +51,14 @@ const AppContent: React.FC = () => {
     "/admin-dashboard/users",
     "/admin-dashboard/settings",
     "/admin-dashboard/add-rider"
-    
+
   ];
 
   return (
     <div className="flex flex-col min-h-screen relative">
       {/* Hide Navbar for Dashboard Pages */}
       {/* {!location.pathname.startsWith("/chef-dashboard") && !location.pathname.startsWith("/admin-dashboard") && <Navbar />} */}
-      <Navbar/>
+      <Navbar />
 
       <main className="flex-grow">
         <Routes>
@@ -68,28 +71,32 @@ const AppContent: React.FC = () => {
           <Route path="/chef-register" element={<ChefRegisterPage />} />
 
           {/* chefdashboard Routes */}
-          <Route path="/chef-dashboard/*" element={<ChefDashboardLayout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="customizeorder" element={<CustomizeOrder />} />
-            <Route path="orders" element={<Orders />} />
-            <Route path="settings" element={<Settings />} />
-            <Route path="premium" element={<Premium />} />
-            <Route path="menuupload" element={<MenuUpload />} />
-            <Route path="deliverypartners" element={<DeliveryPartners />} />
+          <Route element={<ProtectedRoute requiredRole={"chef"} />}>
+            <Route path="/chef-dashboard/*" element={<ChefDashboardLayout />}>
+              <Route index element={<Dashboard />} />
+              <Route path="customizeorder" element={<CustomizeOrder />} />
+              <Route path="orders" element={<Orders />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="premium" element={<Premium />} />
+              <Route path="menuupload" element={<MenuUpload />} />
+              <Route path="deliverypartners" element={<DeliveryPartners />} />
+            </Route>
           </Route>
 
-          
-        {/* Admin Dashboard Routes */}
-        <Route path="/admin-dashboard/*" element={<AdminDashboardLayout />}>
-          <Route index element={<AdminDashboard />} />
-          <Route path="kitchen-approval" element={<KitchenApproval />} />
-          {/* <Route path="deliverypartner-approval" element={<DeliveryPartnerApproval />} /> */}
-          <Route path="users" element={<Users />} />
-          <Route path="settings" element={<AdminSettings />} />
-          <Route path="add-rider" element={<AddRider />} />
-         
+          {/* Unauthorized Page */}
+          <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
-        </Route> 
+
+          {/* Admin Dashboard Routes */}
+          <Route element={<ProtectedRoute requiredRole="admin" />}>
+            <Route path="/admin-dashboard/*" element={<AdminDashboardLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="kitchen-approval" element={<KitchenApproval />} />
+              <Route path="users" element={<Users />} />
+              <Route path="settings" element={<AdminSettings />} />
+              <Route path="add-rider" element={<AddRider />} />
+            </Route>
+          </Route>
         </Routes>
 
       </main>
@@ -112,13 +119,15 @@ const AppContent: React.FC = () => {
 // Main App
 const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <CartProvider>
-        <Router>
-          <AppContent />
-        </Router>
-      </CartProvider>
-    </AuthProvider>
+    <KitchenProvider>
+      <AuthProvider>
+        <CartProvider>
+          <Router>
+            <AppContent />
+          </Router>
+        </CartProvider>
+      </AuthProvider>
+    </KitchenProvider>
   );
 };
 

@@ -16,6 +16,14 @@ const MenuSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  ingredients:{
+    type: String,
+    default: "",
+  },
+  rating:{
+    type: Number,
+    default: 0
+  },
   description: {
     type: String,
     default: "",

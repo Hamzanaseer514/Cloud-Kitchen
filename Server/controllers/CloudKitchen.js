@@ -112,6 +112,42 @@ const chkChefKitchen = async (chefid) => {
   }
 };
 
+const AddMenu = async (req, res) => {
+  try {
+    // ✅ User ID JWT سے نکالنا
+    const userId = req.user.id; // Middleware se token verify hone ke baad `req.user` me ID mil jaye gi
+
+    // ✅ Kitchen Find karna (Jisme owner ka ID match kare)
+    const kitchen = await Kitchen.findOne({ owner: userId });
+
+    if (!kitchen) {
+      return res.status(404).json({ message: "No kitchen found for this user" });
+    }
+
+    // ✅ Request Body se Data Lena
+    const { name, price, category, ingredients, description, image } = req.body;
+
+    // ✅ New Menu Item Object
+    const newMenuItem = {
+      name,
+      price,
+      category,
+      ingredients,
+      description,
+      image,
+    };
+
+    // ✅ Mongoose `$push` se menu add karna
+    kitchen.menus.push(newMenuItem);
+    await kitchen.save(); // Save to DB
+
+    res.status(200).json({ message: "Menu item added successfully", kitchen });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
+
+
 // ✅ CommonJS Export
 module.exports = {
   registerKitchen,
@@ -120,4 +156,5 @@ module.exports = {
   updateKitchen,
   deleteKitchen,
   chkChefKitchen,
+  AddMenu
 };
