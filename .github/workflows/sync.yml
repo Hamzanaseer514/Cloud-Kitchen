@@ -1,0 +1,23 @@
+name: Sync Fork
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Har 6 ghante baad auto-sync karega
+  workflow_dispatch:  # Manual trigger ke liye option
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Forked Repository
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - name: Add Upstream and Fetch Changes
+        run: |
+          git remote add upstream https://github.com/noorfatima262004/Cloud-Kitchen.git
+          git fetch upstream
+          git checkout main
+          git merge upstream/main --allow-unrelated-histories
+          git push origin main
