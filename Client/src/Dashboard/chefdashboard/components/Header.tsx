@@ -1,10 +1,12 @@
 import { Bell, Menu, Search } from 'lucide-react';
+import { useAuth } from '../../../context/AuthContext';
 
 interface HeaderProps {
   toggleSidebar: () => void;
 }
 
 export function Header({ toggleSidebar }: HeaderProps) {
+  const { user } = useAuth();
   return (
     <div className="sticky top-0 z-10 bg-white shadow-sm px-4 lg:px-6 py-4">
       <div className="flex items-center justify-between">
@@ -37,8 +39,8 @@ export function Header({ toggleSidebar }: HeaderProps) {
           
           <div className="flex items-center space-x-3">
             <div className="hidden md:block text-right">
-              <p className="font-medium text-gray-800">Gordon Smith</p>
-              <p className="text-sm text-gray-500">Head Chef</p>
+              <p className="font-medium text-gray-800">{user?.fullname}</p>
+              <p className="text-sm text-gray-500">{user?.role}</p>
             </div>
             <img
               src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80"
