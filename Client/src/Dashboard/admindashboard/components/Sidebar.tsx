@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { ChefHat, Home, Users, Settings, Menu, X,CookingPot,Bike } from 'lucide-react';
+import { useAuth } from '../../../context/AuthContext';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -7,6 +8,7 @@ interface SidebarProps {
 }
 
 export function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
+  const { user } = useAuth();
   const location = useLocation();
   const currentPath = location.pathname;
 
@@ -74,8 +76,8 @@ export function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
               className="w-10 h-10 rounded-full object-cover"
             />
             <div>
-              <p className="font-medium text-gray-800">Gordon Smith</p>
-              <p className="text-sm text-gray-500">Admin</p>
+              <p className="font-medium text-gray-800">{user?.fullname}</p>
+              <p className="text-sm text-gray-500">{user?.role}</p>
             </div>
           </div>
         </div>

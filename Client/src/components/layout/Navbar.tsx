@@ -20,6 +20,7 @@ const Navbar: React.FC = () => {
     navigate('/');
     setIsMenuOpen(false);
   };
+  
 
   const getDashboardLink = () => {
     if (!user) return '/login';

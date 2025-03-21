@@ -70,13 +70,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(JSON.parse(storedUser));
       }
     };
+
+    handleStorageChange();
+    // setIsLoading(false);
   
-    // Event listener add karein
-    window.addEventListener('storage', handleStorageChange);
+    // // Event listener add karein
+    // window.addEventListener('storage', handleStorageChange);
   
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
+    // return () => {
+    //   window.removeEventListener('storage', handleStorageChange);
+    // };
   }, []);
   
   
@@ -99,6 +102,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // setUser(JSON.parse(user));
       localStorage.setItem('cloudKitchenUser', JSON.stringify(user));
       const storedUser = localStorage.getItem('cloudKitchenUser');
+      console.log(storedUser);
       if (storedUser) {
         setUser(JSON.parse(storedUser));
       }
@@ -158,6 +162,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         login,
         register,
         logout,
+        
       }}
     >
       {children}

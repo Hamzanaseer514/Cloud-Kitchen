@@ -8,7 +8,7 @@ const {
 
 } = require('../controllers/CloudKitchen');
 
-const { addCustomOrder ,getCustomOrdersForSpecificKitchen} = require("../controllers/Customize");
+const { addCustomOrder ,getCustomOrdersForSpecificKitchen,updateOrderStatus} = require("../controllers/Customize");
 
 
 
@@ -22,5 +22,6 @@ router.get("/:id", getKitchenMenus);
 router.post('/addmenu',protect,AddMenu)
 router.post('/addcustomorder', protect, addCustomOrder);
 router.get('/customize/order',protect, getCustomOrdersForSpecificKitchen);
+router.put('/customize/updateorder', updateOrderStatus)
 
 module.exports = router; // ✅ Correct spelling

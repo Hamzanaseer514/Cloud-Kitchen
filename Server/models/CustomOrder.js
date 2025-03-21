@@ -42,6 +42,11 @@ const customOrderSchema = new mongoose.Schema({
         type: String, 
         default: "" 
     },
+    status: { 
+        type: String, 
+        enum: ["Pending", "Accepted", "Preparing", "On The Way", "Delivered", "Cancelled"], 
+        default: "Pending" 
+    },
     createdAt: { 
         type: Date, 
         default: Date.now 

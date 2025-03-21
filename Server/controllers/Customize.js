@@ -34,6 +34,36 @@ const addCustomOrder = async (req, res) => {
     }
 };
 
+const updateOrderStatus = async (req, res) => {
+    try {
+        const { status, orderId } = req.body;
+        console.log(req.body)
+
+        const validStatuses = ["Pending", "Accepted", "Preparing", "On The Way", "Delivered", "Cancelled"];
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({ error: "Invalid status value" });
+        }
+
+        const updatedOrder = await CustomOrder.findOneAndUpdate(
+            { orderId },
+            { status },
+            { new: true }
+        );
+
+        if (!updatedOrder) {
+            return res.status(404).json({ error: "Order not found" });
+        }
+
+        res.status(200).json({ message: "Order status updated successfully!", order: updatedOrder });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+
+
+
+
 const getCustomOrdersForSpecificKitchen = async (req, res) => {
     try {
         const userId = req.user.id;
@@ -55,4 +85,4 @@ const getCustomOrdersForSpecificKitchen = async (req, res) => {
     }
 };
 
-module.exports = { addCustomOrder,getCustomOrdersForSpecificKitchen };
+module.exports = { addCustomOrder,getCustomOrdersForSpecificKitchen,updateOrderStatus };
