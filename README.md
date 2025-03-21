@@ -1,6 +1,9 @@
 # **Cloud Kitchen** 🍽️🚀  
 A **modern and efficient** cloud kitchen management system that allows **chefs** to run their virtual kitchens seamlessly. With a robust authentication system and an approval-based kitchen registration process, this platform ensures **quality and trust** between chefs and customers.  
 
+## **Figma Design**
+View the latest UI/UX designs here: [Figma Link](https://www.figma.com/design/eCzUV3i3tALpBvOHxTyiU6/Cloud-Kitchen?node-id=0-1&t=Z8vicOtkh9vImcOE-1)
+
 ---
 
 ## **🚀 Features**  
