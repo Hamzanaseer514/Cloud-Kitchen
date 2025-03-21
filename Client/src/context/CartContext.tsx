@@ -1,15 +1,26 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { CartItem, FoodItem } from '../types';
 
-interface CartContextType {
+export type CartItem = {
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+  category: string;
+  rating: number;   // ⭐ Rating field added
+  description: string;  // 📖 Description field added
+  ingredients: string;  // 🍽️ Ingredients field added
+  quantity: number;
+};
+
+type CartContextType = {
   items: CartItem[];
-  addToCart: (item: FoodItem, quantity: number, customizations?: CartItem['customizations'], specialInstructions?: string) => void;
-  removeFromCart: (itemId: string) => void;
-  updateQuantity: (itemId: string, quantity: number) => void;
+  addItem: (item: Omit<CartItem, 'quantity'>) => void;
+  removeItem: (id: number) => void;
+  updateQuantity: (id: number, quantity: number) => void;
   clearCart: () => void;
   totalItems: number;
-  subtotal: number;
-}
+  totalPrice: number;
+};
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
@@ -20,11 +31,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const savedCart = localStorage.getItem('cloudKitchenCart');
     if (savedCart) {
-      try {
-        setItems(JSON.parse(savedCart));
-      } catch (error) {
-        console.error('Failed to parse cart from localStorage:', error);
-      }
+      setItems(JSON.parse(savedCart));
     }
   }, []);
 
@@ -33,44 +40,36 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('cloudKitchenCart', JSON.stringify(items));
   }, [items]);
 
-  const addToCart = (
-    foodItem: FoodItem,
-    quantity: number,
-    customizations?: CartItem['customizations'],
-    specialInstructions?: string
-  ) => {
+  const addItem = (item: Omit<CartItem, 'quantity'>) => {
     setItems(prevItems => {
       // Check if item already exists in cart
-      const existingItemIndex = prevItems.findIndex(
-        item => item.foodItem.id === foodItem.id && 
-        JSON.stringify(item.customizations) === JSON.stringify(customizations)
-      );
-
+      const existingItemIndex = prevItems.findIndex(i => i.id === item.id);
+      
       if (existingItemIndex >= 0) {
-        // Update existing item
+        // Item exists, increase quantity
         const updatedItems = [...prevItems];
-        updatedItems[existingItemIndex].quantity += quantity;
+        updatedItems[existingItemIndex].quantity += 1;
         return updatedItems;
       } else {
-        // Add new item
-        return [...prevItems, { foodItem, quantity, customizations, specialInstructions }];
+        // Item doesn't exist, add new item with quantity 1
+        return [...prevItems, { ...item, quantity: 1 }];
       }
     });
   };
 
-  const removeFromCart = (itemId: string) => {
-    setItems(prevItems => prevItems.filter(item => item.foodItem.id !== itemId));
+  const removeItem = (id: number) => {
+    setItems(prevItems => prevItems.filter(item => item.id !== id));
   };
 
-  const updateQuantity = (itemId: string, quantity: number) => {
+  const updateQuantity = (id: number, quantity: number) => {
     if (quantity <= 0) {
-      removeFromCart(itemId);
+      removeItem(id);
       return;
     }
-
+    
     setItems(prevItems => 
       prevItems.map(item => 
-        item.foodItem.id === itemId ? { ...item, quantity } : item
+        item.id === id ? { ...item, quantity } : item
       )
     );
   };
@@ -80,36 +79,28 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const totalItems = items.reduce((total, item) => total + item.quantity, 0);
-
-  const subtotal = items.reduce((total, item) => {
-    const itemPrice = item.foodItem.price;
-    const customizationPrice = item.customizations?.reduce((acc, customization) => {
-      const option = item.foodItem.customizationOptions?.find(opt => opt.id === customization.optionId);
-      const choice = option?.options.find(choice => choice.id === customization.choiceId);
-      return acc + (choice?.price || 0);
-    }, 0) || 0;
-    
-    return total + ((itemPrice + customizationPrice) * item.quantity);
-  }, 0);
+  
+  const totalPrice = items.reduce(
+    (total, item) => total + item.price * item.quantity, 
+    0
+  );
 
   return (
-    <CartContext.Provider
-      value={{
-        items,
-        addToCart,
-        removeFromCart,
-        updateQuantity,
-        clearCart,
-        totalItems,
-        subtotal,
-      }}
-    >
+    <CartContext.Provider value={{
+      items,
+      addItem,
+      removeItem,
+      updateQuantity,
+      clearCart,
+      totalItems,
+      totalPrice
+    }}>
       {children}
     </CartContext.Provider>
   );
 };
 
-export const useCart = () => {
+export const useCart = (): CartContextType => {
   const context = useContext(CartContext);
   if (context === undefined) {
     throw new Error('useCart must be used within a CartProvider');

@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Star, Clock, Tag, ChefHat, Loader2 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
+import { Star, Clock, Tag, ChefHat, Loader2, ShoppingCart } from "lucide-react";
+import { useCart } from "../context/CartContext"; // Import Cart Context
 
 const KitchenMenu = () => {
     const { id } = useParams();
     const [menus, setMenus] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const { addItem } = useCart(); // Cart Context ka function get kia
 
     useEffect(() => {
         const fetchKitchen = async () => {
@@ -53,34 +55,31 @@ const KitchenMenu = () => {
     );
 
     return (
-        <div className="min-h-screen ">
+        <div className="min-h-screen">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 {/* Hero Section */}
                 <div className="relative text-center mb-16">
-    {/* Text Content Centered */}
-    <div className="max-w-2xl mx-auto">
-        <div className="inline-flex items-center gap-2 p-2 px-4 rounded-full bg-orange-100 text-orange-800 font-medium text-sm mb-4">
-            <ChefHat className="w-4 h-4" />
-            <span>Professional Kitchen Service</span>
-        </div>
-        <h1 className="text-4xl md:text-5xl font-bold text-orange-900 mb-4">
-            Our Culinary Delights
-        </h1>
-        <p className="text-lg text-orange-700">
-            Discover our carefully curated menu featuring the finest ingredients
-            and expert craftsmanship in every dish.
-        </p>
-    </div>
+                    <div className="max-w-2xl mx-auto">
+                        <div className="inline-flex items-center gap-2 p-2 px-4 rounded-full bg-orange-100 text-orange-800 font-medium text-sm mb-4">
+                            <ChefHat className="w-4 h-4" />
+                            <span>Professional Kitchen Service</span>
+                        </div>
+                        <h1 className="text-4xl md:text-5xl font-bold text-orange-900 mb-4">
+                            Our Culinary Delights
+                        </h1>
+                        <p className="text-lg text-orange-700">
+                            Discover our carefully curated menu featuring the finest ingredients
+                            and expert craftsmanship in every dish.
+                        </p>
+                    </div>
 
-    {/* Customize Button Right Side */}
-   <Link to={`/kitchen/${id}/customize-food`}>
-   <button className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2 px-6 rounded-lg transition-all">
-        Customize Your Food
-    </button>
-   </Link>
-</div>
-
-
+                    {/* Customize Button Right Side */}
+                    <Link to={`/kitchen/${id}/customize-food`}>
+                        <button className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2 px-6 rounded-lg transition-all">
+                            Customize Your Food
+                        </button>
+                    </Link>
+                </div>
 
                 {/* Menu Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -135,11 +134,23 @@ const KitchenMenu = () => {
                                     </div>
                                 </div>
 
-                                {/* Button at Bottom */}
-                                <button className="mt-auto w-full bg-orange-500 text-white py-2 px-4 rounded-lg font-medium 
-                                                 hover:bg-orange-600 transition-colors duration-300 flex items-center justify-center">
-                                    <Clock className="w-4 h-4 mr-2" />
-                                    Order Now
+                                {/* Add to Cart Button */}
+                                <button
+                                    className="mt-auto w-full bg-orange-500 text-white py-2 px-4 rounded-lg font-medium 
+                                                hover:bg-orange-600 transition-colors duration-300 flex items-center justify-center"
+                                    onClick={() => addItem({
+                                        id: item.id,
+                                        name: item.name,
+                                        price: item.price,
+                                        image: item.image,
+                                        category: item.category,
+                                        rating: item.rating,
+                                        description: item.description,
+                                        ingredients: item.ingredients,
+                                    })}
+                                >
+                                    <ShoppingCart className="w-4 h-4 mr-2" />
+                                    Add to Cart
                                 </button>
                             </div>
                         </div>

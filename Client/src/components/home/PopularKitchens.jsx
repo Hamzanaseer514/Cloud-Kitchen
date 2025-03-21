@@ -22,75 +22,69 @@ const PopularKitchens = () => {
           </p>
         </div>
 
-        {/* Kitchens List */}
+        {/* Kitchens List (Show Only First 6) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {kitchens.filter(kitchen => kitchen.approve === "yes").length > 0 ? (
+          {kitchens.filter(kitchen => kitchen.approve === "yes").slice(0, 6).length > 0 ? (
             kitchens
-              .filter(kitchen => kitchen.approve === "yes") // ✅ Sirf approved kitchens ko filter kar rahe hain
+              .filter(kitchen => kitchen.approve === "yes") 
+              .slice(0, 6) // ✅ Sirf first 6 kitchens show hongi
               .map((kitchen) => (
-                <Link to = {`/kitchen/${kitchen._id}`}> 
-                <div
-                  key={kitchen._id}
-                  className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow"
-                >
-                  {/* Kitchen Logo */}
-                  <div className="relative h-48 overflow-hidden">
-                    <img
-                    // src="https://images.unsplash.com/photo-1556912173-3bb406ef7e77?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGtpdGNoZW58ZW58MHx8MHx8fDA%3D"
-                      src={kitchen.kitchenLogo || "https://images.unsplash.com/photo-1556912173-3bb406ef7e77?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGtpdGNoZW58ZW58MHx8MHx8fDA%3D"}
-                      alt={kitchen.kitchenName}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                <Link to={`/kitchen/${kitchen._id}`} key={kitchen._id}> 
+                  <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
+                    {/* Kitchen Logo */}
+                    <div className="relative h-48 overflow-hidden">
+                      <img
+                        src={kitchen.kitchenLogo || "https://images.unsplash.com/photo-1556912173-3bb406ef7e77?fm=jpg&q=60&w=3000"}
+                        alt={kitchen.kitchenName}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
 
-                  {/* Kitchen Info */}
-                  <div className="p-6">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900">
-                          {kitchen.kitchenName}
-                        </h3>
-                        <p className="text-sm text-gray-600">By {kitchen.owner.name}</p>
-                      </div>
-                      <div
-                        className={`px-2 py-1 rounded text-sm font-bold ${kitchen.status === "Open"
-                            ? "bg-green-100 text-green-600"
-                            : "bg-red-100 text-red-600"
+                    {/* Kitchen Info */}
+                    <div className="p-6">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900">
+                            {kitchen.kitchenName}
+                          </h3>
+                          <p className="text-sm text-gray-600">By {kitchen.owner.name}</p>
+                        </div>
+                        <div
+                          className={`px-2 py-1 rounded text-sm font-bold ${
+                            kitchen.status === "Open" ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"
                           }`}
-                      >
-                        {kitchen.status}
+                        >
+                          {kitchen.status}
+                        </div>
+                      </div>
+
+                      {/* Rating & Timings */}
+                      <div className="flex items-center mt-2 text-gray-600 text-sm">
+                        <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                        <span className="ml-1">{kitchen.rating.toFixed(1)}</span>
+                        <span className="mx-2 text-gray-400">•</span>
+                        <Clock className="h-4 w-4 mr-1" />
+                        {kitchen.openingTime} - {kitchen.closingTime}
+                      </div>
+
+                      {/* Specification */}
+                      <p className="mt-2 text-gray-700 text-sm">{kitchen.specification}</p>
+
+                      {/* Buttons */}
+                      <div className="mt-4 flex justify-between">
+                        <Link to={`/kitchen/${kitchen._id}`}>
+                          <Button variant="outline" size="sm">View Details</Button>
+                        </Link>
+                        <Button size="sm">Order Now</Button>
                       </div>
                     </div>
-
-                    {/* Rating & Timings */}
-                    <div className="flex items-center mt-2 text-gray-600 text-sm">
-                      <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                      <span className="ml-1">{kitchen.rating.toFixed(1)}</span>
-                      <span className="mx-2 text-gray-400">•</span>
-                      <Clock className="h-4 w-4 mr-1" />
-                      {kitchen.openingTime} - {kitchen.closingTime}
-                    </div>
-
-                    {/* Specification */}
-                    <p className="mt-2 text-gray-700 text-sm">{kitchen.specification}</p>
-
-                    {/* Buttons */}
-                    <div className="mt-4 flex justify-between">
-                      <Link to={`/kitchen/${kitchen._id}`}>
-                        <Button variant="outline" size="sm">View Details</Button>
-                      </Link>
-                      <Button size="sm">Order Now</Button>
-                    </div>
                   </div>
-                </div>
                 </Link>
-                
               ))
           ) : (
             <p className="text-center text-gray-500">No kitchens available.</p>
           )}
         </div>
-
 
         {/* View More Button */}
         <div className="mt-12 text-center">
@@ -102,5 +96,6 @@ const PopularKitchens = () => {
     </section>
   );
 };
+
 
 export default PopularKitchens;
