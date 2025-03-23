@@ -37,6 +37,7 @@ import RiderSettings from './Dashboard/riderdashboard/pages/RiderSettings';
 import RiderDashboard from './Dashboard/riderdashboard/pages/RiderDashboard';
 import RiderDashboardLayout from './Dashboard/riderdashboard/layout/RiderDashboardLayout';
 import CustomizeFood from './pages/CustomizeFood.js';
+import CartPage from './pages/CartPage.js';
 
 
 
@@ -81,6 +82,7 @@ const AppContent: React.FC = () => {
             <Route path="/kitchen/:id" element={<KitchenMenu />} />
           </Route>
           <Route path='/kitchen/:id/customize-food' element={<CustomizeFood/>}/>
+          <Route path='/cart' element={<CartPage/>}/>
 
 
 
