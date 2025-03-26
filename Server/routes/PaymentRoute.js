@@ -34,11 +34,11 @@ router.post('/create-checkout-session', async (req, res) => {
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
-      success_url: 'http://localhost:3000/success',
+      success_url: 'http://localhost:5173/success',
       cancel_url: 'http://localhost:3000/cancel',
     });
 
-    console.log("✅ Stripe Checkout Session Created:", session.url); // Debug log
+    console.log("✅ Stripe Checkout Session Created:", session.url); // Debug 
 
     res.json({ url: session.url });
   } catch (error) {

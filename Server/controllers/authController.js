@@ -16,6 +16,8 @@ exports.register = asyncHandler(async (req, res, next) => {
     accountstatus = "active";
   }
   console.log(req.body);
+  let cart = {}
+  
   // Create user
   const user = await User.create({
     fullname,
@@ -23,7 +25,8 @@ exports.register = asyncHandler(async (req, res, next) => {
     password,
     phone,
     role,
-    accountstatus
+    accountstatus,
+    cartItem: cart
   });
 
   if (user.role === "rider") {
@@ -200,5 +203,79 @@ exports.registerRider = asyncHandler(async (req, res, next) => {
   sendTokenResponse(rider, 201, res);
 }
 );
+
+
+// ✅ Update User's Cart
+exports.updateCart = asyncHandler(async (req, res, next) => {
+  try {
+    // ✅ Get User ID from Auth Middleware
+    const userId = req.user.id;
+    if (!userId) {
+      return next(new ErrorResponse("User ID missing from token", 400));
+    }
+
+    // 🛒 Extract cartItems from request body
+    const { cartItems } = req.body;
+
+    console.log("🛒 Received Cart Update Request:", req.body);
+
+    // 🛑 Check if cartItems is an array
+    if (!Array.isArray(cartItems)) {
+      console.error("❌ Error: cartItems is not an array!", cartItems);
+      return next(new ErrorResponse("Cart must be an array", 400));
+    }
+
+    // ✅ Fix: Use `findByIdAndUpdate` to avoid version conflict
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { CartItem: cartItems }, 
+      { new: true, overwrite: false } // ✅ Ensures latest version is used
+    );
+
+    if (!updatedUser) {
+      return next(new ErrorResponse("User not found", 404));
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Cart updated successfully!",
+      cart: updatedUser.CartItem,
+    });
+  } catch (error) {
+    console.error("❌ Server Error in Cart Update:", error);
+    next(new ErrorResponse("Internal Server Error", 500));
+  }
+});
+
+// ✅ Get User's Cart (User-Specific)
+exports.getUserCart = asyncHandler(async (req, res, next) => {
+  try {
+    // ✅ Get User ID from Token
+    const userId = req.user.id;
+    if (!userId) {
+      return next(new ErrorResponse("User ID missing from token", 400));
+    }
+
+    // 🔎 Find User in Database
+    const user = await User.findById(userId);
+    if (!user) {
+      return next(new ErrorResponse("User not found", 404));
+    }
+
+    // ✅ Return User's Cart
+    res.status(200).json({
+      success: true,
+      cart: user.CartItem || [], // Ensure cart is always an array
+    });
+  } catch (error) {
+    console.error("❌ Server Error in Fetching Cart:", error);
+    next(new ErrorResponse("Internal Server Error", 500));
+  }
+});
+
+
+
+
+
 
 

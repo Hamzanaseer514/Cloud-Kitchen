@@ -139,7 +139,7 @@ const KitchenMenu = () => {
                                     className="mt-auto w-full bg-orange-500 text-white py-2 px-4 rounded-lg font-medium 
                                                 hover:bg-orange-600 transition-colors duration-300 flex items-center justify-center"
                                     onClick={() => addItem({
-                                        id: item.id,
+                                        _id: item._id,
                                         name: item.name,
                                         price: item.price,
                                         image: item.image,

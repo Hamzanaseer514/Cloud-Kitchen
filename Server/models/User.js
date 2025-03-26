@@ -3,6 +3,18 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const validator = require('validator');
 
+const CartItemSchema = new mongoose.Schema({
+  _id: mongoose.Schema.Types.ObjectId,
+  name: String,
+  price: Number,
+  image: String,
+  category: String,
+  rating: Number,
+  description: String,
+  ingredients: String,
+  quantity: Number
+});
+
 const UserSchema = new mongoose.Schema({
   fullname: {
     type: String,
@@ -26,17 +38,17 @@ const UserSchema = new mongoose.Schema({
   phone: {
     type: String,
     validate: {
-      validator: function(v) {
+      validator: function (v) {
         return /^[0-9+\-\s()]*$/.test(v);
       },
       message: props => `${props.value} is not a valid phone number!`
     }
   },
-  address:{
+  address: {
     type: String,
-    default : ""
+    default: ""
   },
-  isUserChef:{
+  isUserChef: {
     type: Boolean,
     default: false
   },
@@ -45,11 +57,12 @@ const UserSchema = new mongoose.Schema({
     enum: ['customer', 'chef', 'rider', 'admin'],
     default: 'customer'
   },
-  accountstatus:{
+  accountstatus: {
     type: String,
     enum: ['active', 'inactive'],
     default: 'active'
   },
+  CartItem: { type: [CartItemSchema], default: [] },
   createdAt: {
     type: Date,
     default: Date.now
@@ -57,7 +70,7 @@ const UserSchema = new mongoose.Schema({
 });
 
 // Encrypt password using bcrypt
-UserSchema.pre('save', async function(next) {
+UserSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     next();
   }
@@ -67,14 +80,14 @@ UserSchema.pre('save', async function(next) {
 });
 
 // Sign JWT and return
-UserSchema.methods.getSignedJwtToken = function() {
-  return jwt.sign({ id: this._id , role: this.role}, process.env.JWT_SECRET, {
+UserSchema.methods.getSignedJwtToken = function () {
+  return jwt.sign({ id: this._id, role: this.role }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE
   });
 };
 
 // Match user entered password to hashed password in database
-UserSchema.methods.matchPassword = async function(enteredPassword) {
+UserSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 

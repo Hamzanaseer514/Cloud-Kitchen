@@ -5,7 +5,9 @@ const {
   getMe,
   logout,
   updateProfile,
-  registerRider 
+  registerRider,
+  updateCart,
+  getUserCart
   
 } = require('../controllers/authController');
 
@@ -19,6 +21,8 @@ router.get('/me', protect, getMe);
 router.get('/logout', logout);
 router.put("/updateprofile", protect, updateProfile);
 router.post("/registerrider", registerRider);
+router.put("/updatecart",protect,updateCart);
+router.get("/getcart",protect,getUserCart);
 
 
 module.exports = router;

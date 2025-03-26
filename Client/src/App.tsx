@@ -38,6 +38,8 @@ import RiderDashboard from './Dashboard/riderdashboard/pages/RiderDashboard';
 import RiderDashboardLayout from './Dashboard/riderdashboard/layout/RiderDashboardLayout';
 import CustomizeFood from './pages/CustomizeFood.js';
 import CartPage from './pages/CartPage.js';
+import PaymentSuccess from './pages/PaymentSuccess.jsx';
+import PopularKitchens from './components/home/PopularKitchens.jsx';
 
 
 
@@ -75,7 +77,7 @@ const AppContent: React.FC = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/menu" element={<MenuPage />} />
+          <Route path="/kitchen" element={<PopularKitchens />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/chef-register" element={<ChefRegisterPage />} />
           <Route element={<ProtectedRoute requiredRole="customer" />}>
@@ -83,6 +85,7 @@ const AppContent: React.FC = () => {
           </Route>
           <Route path='/kitchen/:id/customize-food' element={<CustomizeFood/>}/>
           <Route path='/cart' element={<CartPage/>}/>
+          <Route path="/success" element={<PaymentSuccess/>} />
 
 
 
