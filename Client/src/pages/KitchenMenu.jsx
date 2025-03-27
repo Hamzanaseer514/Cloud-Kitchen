@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Star, Clock, Tag, ChefHat, Loader2, ShoppingCart } from "lucide-react";
 import { useCart } from "../context/CartContext"; // Import Cart Context
+import Review from "./Review";
 
 const KitchenMenu = () => {
     const { id } = useParams();
@@ -60,8 +61,8 @@ const KitchenMenu = () => {
                 {/* Hero Section */}
                 <div className="relative text-center mb-16">
                     <div className="max-w-2xl mx-auto">
-                        <div className="inline-flex items-center gap-2 p-2 px-4 rounded-full bg-orange-100 text-orange-800 font-medium text-sm mb-4">
-                            <ChefHat className="w-4 h-4" />
+                        <div className="inline-flex items-center gap-2 my-7 p-2 px-4 rounded-full bg-orange-100 text-orange-800 font-medium text-sm mb-4">
+                            <ChefHat className="w-4 h-4 " />
                             <span>Professional Kitchen Service</span>
                         </div>
                         <h1 className="text-4xl md:text-5xl font-bold text-orange-900 mb-4">
@@ -75,10 +76,21 @@ const KitchenMenu = () => {
 
                     {/* Customize Button Right Side */}
                     <Link to={`/kitchen/${id}/customize-food`}>
-                        <button className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2 px-6 rounded-lg transition-all">
-                            Customize Your Food
-                        </button>
-                    </Link>
+    <button className="relative my-4 w-full sm:w-auto max-w-xs sm:max-w-md mx-auto
+        bg-gradient-to-r from-red-600 via-orange-500 to-yellow-400 
+        hover:from-yellow-400 hover:via-orange-500 hover:to-red-600 
+        text-white font-bold text-lg md:text-base sm:text-sm tracking-wide 
+        py-3 md:py-2 sm:py-1 px-10 md:px-6 sm:px-4 
+        rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out 
+        transform hover:scale-105 border-2 border-white flex items-center justify-center gap-2">
+        
+        <span className="text-2xl md:text-xl sm:text-lg">🍽</span> 
+        <span>Customize Your Food</span>
+    </button>
+</Link>
+
+
+
                 </div>
 
                 {/* Menu Grid */}
@@ -157,6 +169,7 @@ const KitchenMenu = () => {
                     ))}
                 </div>
             </div>
+            {/* <Review /> */}
         </div>
     );
 };

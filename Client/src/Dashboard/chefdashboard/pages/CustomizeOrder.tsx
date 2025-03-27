@@ -112,6 +112,7 @@ function App() {
   }, []);
 
   const updateOrder = async (id: string, updates: Partial<Order>) => {
+    alert(id)
     try {
       const response = await fetch("http://localhost:5000/api/kitchen/customize/updateorder", {
         method: "PUT",
