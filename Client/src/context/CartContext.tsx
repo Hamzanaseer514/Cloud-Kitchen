@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 
-// 🛒 Cart Item Type Definition
 export type CartItem = {
-  _id: string; // ✅ MongoDB wali `_id` use ho rahi hai
+  _id: string;
+  kitchenId: string
   name: string;
   price: number;
   image: string;
@@ -13,7 +13,6 @@ export type CartItem = {
   quantity: number;
 };
 
-// 🛍️ Cart Context Type
 type CartContextType = {
   items: CartItem[];
   addItem: (item: CartItem) => void;
@@ -24,19 +23,17 @@ type CartContextType = {
   totalPrice: number;
 };
 
-// 🛒 Creating Cart Context
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-// 🏪 Cart Provider
+
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [items, setItems] = useState<CartItem[]>([]);
 
-  // ✅ User ID & Token Extract from localStorage
+
   const user = JSON.parse(localStorage.getItem("cloudKitchenUser") || "{}");
   const userId = user?.id;
   const token = localStorage.getItem("token");
 
-  // 📡 🔄 **Function to Sync Cart with Backend**
   const syncCartWithBackend = useCallback(async (updatedCart: CartItem[]) => {
     if (!userId || !token) return;
 
@@ -54,7 +51,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [userId, token]);
 
-  // 🔄 **Fetch Cart Data from Backend on Load**
+  
   useEffect(() => {
     const fetchCart = async () => {
       if (!userId || !token) return;
@@ -97,7 +94,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
-  // ✅ **Remove Item from Cart**
+  
   const removeItem = (_id: string) => {
     setItems((prevItems) => {
       const updatedCart = prevItems.filter((item) => item._id !== _id);
@@ -106,7 +103,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
-  // ✅ **Update Item Quantity**
   const updateQuantity = (_id: string, quantity: number) => {
     setItems((prevItems) => {
       const updatedCart = prevItems.map((item) =>
@@ -117,13 +113,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
-  // ✅ **Clear Entire Cart**
+  
   const clearCart = () => {
     setItems([]);
     syncCartWithBackend([]);
   };
 
-  // 📊 **Calculate Total Items & Price**
+  
   const totalItems = items.reduce((total, item) => total + item.quantity, 0);
   const totalPrice = items.reduce((total, item) => total + item.price * item.quantity, 0);
 

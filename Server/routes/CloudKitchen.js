@@ -4,7 +4,10 @@ const {
     getAllKitchens,
     updateKitchen,
     AddMenu,
-    getKitchenMenus
+    getKitchenMenus,
+    GetAllOrderAccordingToKitchen,
+    updateuserOrderStatus,
+    getAllOrderofSpecificUser
 
 } = require('../controllers/CloudKitchen');
 
@@ -24,5 +27,8 @@ router.post('/addcustomorder', protect, addCustomOrder);
 router.get('/customize/order',protect, getCustomOrdersForSpecificKitchen);
 router.put('/customize/updateorder', updateOrderStatus);
 router.post('/customize/finduserorder',protect,finduserCustomOrder)
+router.get('/user/allorders', protect, GetAllOrderAccordingToKitchen);
+router.put("/user/updateorderstatus",updateuserOrderStatus)
+router.get("/user/getAllOrder",protect,getAllOrderofSpecificUser)
 
 module.exports = router; // ✅ Correct spelling

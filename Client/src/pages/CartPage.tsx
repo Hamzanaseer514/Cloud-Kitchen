@@ -37,7 +37,7 @@ const CartPage = () => {
       // console.log("Checkout session:", session);
 
       if (session.url) {
-        clearCart();
+        // clearCart();
         window.location.href = session.url;
       } else {
         console.error("Session URL not found:", session);
@@ -46,6 +46,32 @@ const CartPage = () => {
       console.error("Error during checkout:", error);
     }
   };
+
+  const addOrdertoUserOrder = async (paymentStatus: string, paymentType: String) => {
+    console.log("hamza")
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/adduserorder", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ items, paymentStatus, paymentType, totalPrice, totalItems }), // Ensure this matches backend expectations
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP Error! Status: ${response.status}`); // Handle errors properly
+      }
+      console.log("hamzaa")
+      const data = await response.json();
+      console.log("Order Response:", data);
+      clearCart();
+      alert("Order Placed Successfully");
+      navigate('/');
+    } catch (error) {
+      console.error("Error during checkout:", error);
+
+    }
+  }
 
 
 
@@ -126,9 +152,13 @@ const CartPage = () => {
                     </div>
                   </div>
 
-                  <button onClick={handleCheckout} className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg transition-colors duration-300 flex items-center justify-center">
+                  <button onClick={() =>{handleCheckout(),addOrdertoUserOrder("Completed","Online")}} className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg transition-colors duration-300 flex items-center justify-center">
                     <ShoppingBag className="h-5 w-5 mr-2" />
                     Proceed to Checkout
+                  </button>
+                  <button onClick={() => { addOrdertoUserOrder("Pending", "COD") }} className="w-full my-3 bg-orange-900 hover:bg-orange-600 text-white py-3 rounded-lg transition-colors duration-300 flex items-center justify-center">
+                    <ShoppingBag className="h-5 w-5 mr-2" />
+                    Cash On Delivery
                   </button>
                 </div>
               </div>

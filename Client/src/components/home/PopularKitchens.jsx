@@ -86,9 +86,8 @@ const PopularKitchens = () => {
           )}
         </div>
 
-        {/* View More Button */}
         <div className="mt-12 text-center">
-          <Link to="/kitchens">
+          <Link to="/kitchen">
             <Button size="lg">View All Kitchens</Button>
           </Link>
         </div>
@@ -96,6 +95,5 @@ const PopularKitchens = () => {
     </section>
   );
 };
-
 
 export default PopularKitchens;

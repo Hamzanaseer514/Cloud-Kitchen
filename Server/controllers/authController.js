@@ -3,6 +3,8 @@ const Rider = require('../models/Rider');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const { chkChefKitchen } = require("./CloudKitchen");
+const OrderHistory = require("../models/orderHistory");
+const Kitchen = require("../models/CloudKitchen");
 // @desc    Register user
 // @route   POST /api/auth/register
 // @access  Public
@@ -17,7 +19,7 @@ exports.register = asyncHandler(async (req, res, next) => {
   }
   console.log(req.body);
   let cart = {}
-  
+
   // Create user
   const user = await User.create({
     fullname,
@@ -33,7 +35,7 @@ exports.register = asyncHandler(async (req, res, next) => {
     const { vehicle, license } = req.body;
     const rider = await Rider.create({
       userid: user._id,
-        vehicle,
+      vehicle,
       license
     });
     if (!rider) {
@@ -205,7 +207,7 @@ exports.registerRider = asyncHandler(async (req, res, next) => {
 );
 
 
-// ✅ Update User's Cart
+
 exports.updateCart = asyncHandler(async (req, res, next) => {
   try {
     // ✅ Get User ID from Auth Middleware
@@ -216,6 +218,7 @@ exports.updateCart = asyncHandler(async (req, res, next) => {
 
     // 🛒 Extract cartItems from request body
     const { cartItems } = req.body;
+    console.log("🛒 Received Cart Update Request:", req.body);
 
     console.log("🛒 Received Cart Update Request:", req.body);
 
@@ -228,9 +231,10 @@ exports.updateCart = asyncHandler(async (req, res, next) => {
     // ✅ Fix: Use `findByIdAndUpdate` to avoid version conflict
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { CartItem: cartItems }, 
-      { new: true, overwrite: false } // ✅ Ensures latest version is used
+      { $set: { CartItem: cartItems } }, // ✅ `$set` ensures only CartItem is updated
+      { new: true } // ✅ No need for `overwrite`
     );
+
 
     if (!updatedUser) {
       return next(new ErrorResponse("User not found", 404));
@@ -247,16 +251,15 @@ exports.updateCart = asyncHandler(async (req, res, next) => {
   }
 });
 
-// ✅ Get User's Cart (User-Specific)
+
 exports.getUserCart = asyncHandler(async (req, res, next) => {
   try {
-    // ✅ Get User ID from Token
+
     const userId = req.user.id;
     if (!userId) {
       return next(new ErrorResponse("User ID missing from token", 400));
     }
 
-    // 🔎 Find User in Database
     const user = await User.findById(userId);
     if (!user) {
       return next(new ErrorResponse("User not found", 404));
@@ -272,6 +275,26 @@ exports.getUserCart = asyncHandler(async (req, res, next) => {
     next(new ErrorResponse("Internal Server Error", 500));
   }
 });
+
+exports.AddUsercartToOrder = asyncHandler(async (req, res, next) => {
+  const { totalPrice, totalItems, paymentType, paymentStatus, items } = req.body;
+  console.log(req.body)
+  const userId = req.user.id;
+  const order = await OrderHistory.create({
+    userId,
+    items,
+    totalPrice,
+    totalItems,
+    paymentStatus,
+    paymentType
+  });
+  if (!order) {
+    return next(new ErrorResponse('Order not created', 400));
+  }
+  res.status(200).json({ success: true, message: "Order placed successfully!" });
+});
+
+
 
 
 

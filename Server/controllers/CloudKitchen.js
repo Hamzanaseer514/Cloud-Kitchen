@@ -1,4 +1,5 @@
 const Kitchen = require("../models/CloudKitchen");
+const OrderHistory = require("../models/orderHistory");
 
 // ✅ Register a new kitchen
 const registerKitchen = async (req, res) => {
@@ -161,6 +162,61 @@ const getKitchenMenus = async (req, res) => {
   }
 };
 
+const GetAllOrderAccordingToKitchen = async (req, res, next) => {
+  const userId = req.user.id;
+  const kitchen = await Kitchen.findOne({ owner: userId });
+  if (!kitchen) {
+    return res.status(404).json({ error: "No kitchen found for this owner" });
+  }
+  const orders = await OrderHistory.find({
+    items: { $elemMatch: { kitchenId: kitchen._id } } // ✅ Match kitchenId inside items array
+  }).populate("userId", "name email"); // ✅ Populate user details
+
+  res.status(200).json({ message: "Orders retrieved successfully!", orders });
+
+}
+
+const getAllOrderofSpecificUser = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Ensure orders are fetched properly
+    const orders = await OrderHistory.find({ userId: userId });
+
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ message: "Orders not found", success: false });
+    }
+
+    res.status(200).json({ message: "Orders found", success: true, orders });
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error", success: false, error: error.message });
+  }
+};
+
+const updateuserOrderStatus = async (req, res) => {
+  try {
+    // const { id } = req.params; 
+    const { status,id } = req.body;
+    console.log(id,status)
+
+    // ✅ Update order status
+    const updatedOrder = await OrderHistory.findByIdAndUpdate(
+      { _id: id },
+      { status },
+      { new: true } 
+    );
+    
+    console.log(updatedOrder)
+    if (!updatedOrder) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    res.status(200).json({ message: "Order status updated successfully!", order: updatedOrder });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 
 // ✅ CommonJS Export
 module.exports = {
@@ -171,5 +227,8 @@ module.exports = {
   deleteKitchen,
   chkChefKitchen,
   AddMenu,
-  getKitchenMenus
+  getKitchenMenus,
+  GetAllOrderAccordingToKitchen,
+  updateuserOrderStatus,
+  getAllOrderofSpecificUser
 };

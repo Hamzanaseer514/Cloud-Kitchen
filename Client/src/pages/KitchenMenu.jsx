@@ -152,6 +152,7 @@ const KitchenMenu = () => {
                                                 hover:bg-orange-600 transition-colors duration-300 flex items-center justify-center"
                                     onClick={() => addItem({
                                         _id: item._id,
+                                        kitchenId: id,
                                         name: item.name,
                                         price: item.price,
                                         image: item.image,

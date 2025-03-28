@@ -14,7 +14,7 @@ import { CartProvider } from './context/CartContext';
 import { KitchenProvider } from './context/KitchenContext.jsx';
 import ChefDashboardLayout from './Dashboard/chefdashboard/layout/ChefDashboardLayout';
 import { Dashboard } from './Dashboard/chefdashboard/pages/Dashboard';
-import { Orders } from './Dashboard/chefdashboard/pages/Orders';
+import Orders from './Dashboard/chefdashboard/pages/Orders';
 import { Settings } from './Dashboard/chefdashboard/pages/Settings';
 import Premium from './Dashboard/chefdashboard/pages/Premium';
 import CustomizeOrder from './Dashboard/chefdashboard/pages/CustomizeOrder';
@@ -40,6 +40,7 @@ import CustomizeFood from './pages/CustomizeFood.js';
 import CartPage from './pages/CartPage.js';
 import PaymentSuccess from './pages/PaymentSuccess.jsx';
 import PopularKitchens from './components/home/PopularKitchens.jsx';
+import GetCustomerOrder from './pages/GetCustomerOrder.jsx';
 
 
 
@@ -86,6 +87,7 @@ const AppContent: React.FC = () => {
           <Route path='/kitchen/:id/customize-food' element={<CustomizeFood/>}/>
           <Route path='/cart' element={<CartPage/>}/>
           <Route path="/success" element={<PaymentSuccess/>} />
+          <Route path="/customer-dashboard" element={<GetCustomerOrder />} />
 
 
 
