@@ -3,6 +3,8 @@ const Rider = require('../models/Rider');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const { chkChefKitchen } = require("./CloudKitchen");
+const OrderHistory = require("../models/orderHistory");
+const Kitchen = require("../models/CloudKitchen");
 // @desc    Register user
 // @route   POST /api/auth/register
 // @access  Public
@@ -16,6 +18,8 @@ exports.register = asyncHandler(async (req, res, next) => {
     accountstatus = "active";
   }
   console.log(req.body);
+  let cart = {}
+
   // Create user
   const user = await User.create({
     fullname,
@@ -23,14 +27,15 @@ exports.register = asyncHandler(async (req, res, next) => {
     password,
     phone,
     role,
-    accountstatus
+    accountstatus,
+    cartItem: cart
   });
 
   if (user.role === "rider") {
     const { vehicle, license } = req.body;
     const rider = await Rider.create({
       userid: user._id,
-        vehicle,
+      vehicle,
       license
     });
     if (!rider) {
@@ -200,5 +205,100 @@ exports.registerRider = asyncHandler(async (req, res, next) => {
   sendTokenResponse(rider, 201, res);
 }
 );
+
+
+
+exports.updateCart = asyncHandler(async (req, res, next) => {
+  try {
+    // ✅ Get User ID from Auth Middleware
+    const userId = req.user.id;
+    if (!userId) {
+      return next(new ErrorResponse("User ID missing from token", 400));
+    }
+
+    // 🛒 Extract cartItems from request body
+    const { cartItems } = req.body;
+    console.log("🛒 Received Cart Update Request:", req.body);
+
+    console.log("🛒 Received Cart Update Request:", req.body);
+
+    // 🛑 Check if cartItems is an array
+    if (!Array.isArray(cartItems)) {
+      console.error("❌ Error: cartItems is not an array!", cartItems);
+      return next(new ErrorResponse("Cart must be an array", 400));
+    }
+
+    // ✅ Fix: Use `findByIdAndUpdate` to avoid version conflict
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $set: { CartItem: cartItems } }, // ✅ `$set` ensures only CartItem is updated
+      { new: true } // ✅ No need for `overwrite`
+    );
+
+
+    if (!updatedUser) {
+      return next(new ErrorResponse("User not found", 404));
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Cart updated successfully!",
+      cart: updatedUser.CartItem,
+    });
+  } catch (error) {
+    console.error("❌ Server Error in Cart Update:", error);
+    next(new ErrorResponse("Internal Server Error", 500));
+  }
+});
+
+
+exports.getUserCart = asyncHandler(async (req, res, next) => {
+  try {
+
+    const userId = req.user.id;
+    if (!userId) {
+      return next(new ErrorResponse("User ID missing from token", 400));
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return next(new ErrorResponse("User not found", 404));
+    }
+
+    // ✅ Return User's Cart
+    res.status(200).json({
+      success: true,
+      cart: user.CartItem || [], // Ensure cart is always an array
+    });
+  } catch (error) {
+    console.error("❌ Server Error in Fetching Cart:", error);
+    next(new ErrorResponse("Internal Server Error", 500));
+  }
+});
+
+exports.AddUsercartToOrder = asyncHandler(async (req, res, next) => {
+  const { totalPrice, totalItems, paymentType, paymentStatus, items } = req.body;
+  console.log(req.body)
+  const userId = req.user.id;
+  const order = await OrderHistory.create({
+    userId,
+    items,
+    totalPrice,
+    totalItems,
+    paymentStatus,
+    paymentType
+  });
+  if (!order) {
+    return next(new ErrorResponse('Order not created', 400));
+  }
+  res.status(200).json({ success: true, message: "Order placed successfully!" });
+});
+
+
+
+
+
+
+
 
 

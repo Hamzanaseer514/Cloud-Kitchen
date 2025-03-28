@@ -73,8 +73,8 @@ const Navbar: React.FC = () => {
             <Link to="/" className="text-gray-700 hover:text-orange-600 px-3 py-2 rounded-md">
               Home
             </Link>
-            <Link to="/menu" className="text-gray-700 hover:text-orange-600 px-3 py-2 rounded-md">
-              Menu
+            <Link to="/kitchen" className="text-gray-700 hover:text-orange-600 px-3 py-2 rounded-md">
+              Kitchens
             </Link>
             <Link to="/about" className="text-gray-700 hover:text-orange-600 px-3 py-2 rounded-md">
               About
@@ -180,11 +180,11 @@ const Navbar: React.FC = () => {
             Home
           </Link>
           <Link
-            to="/menu"
+            to="/kitchen"
             className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-orange-600 hover:bg-gray-50"
             onClick={() => setIsMenuOpen(false)}
           >
-            Menu
+            Kitchens
           </Link>
           <Link
             to="/about"

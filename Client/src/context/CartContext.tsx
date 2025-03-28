@@ -1,22 +1,23 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 
 export type CartItem = {
-  id: number;
+  _id: string;
+  kitchenId: string
   name: string;
   price: number;
   image: string;
   category: string;
-  rating: number;   // ⭐ Rating field added
-  description: string;  // 📖 Description field added
-  ingredients: string;  // 🍽️ Ingredients field added
+  rating: number;
+  description: string;
+  ingredients: string;
   quantity: number;
 };
 
 type CartContextType = {
   items: CartItem[];
-  addItem: (item: Omit<CartItem, 'quantity'>) => void;
-  removeItem: (id: number) => void;
-  updateQuantity: (id: number, quantity: number) => void;
+  addItem: (item: CartItem) => void;
+  removeItem: (_id: string) => void;
+  updateQuantity: (_id: string, quantity: number) => void;
   clearCart: () => void;
   totalItems: number;
   totalPrice: number;
@@ -24,86 +25,126 @@ type CartContextType = {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [items, setItems] = useState<CartItem[]>([]);
 
-  // Load cart from localStorage on initial render
-  useEffect(() => {
-    const savedCart = localStorage.getItem('cloudKitchenCart');
-    if (savedCart) {
-      setItems(JSON.parse(savedCart));
+
+  const user = JSON.parse(localStorage.getItem("cloudKitchenUser") || "{}");
+  const userId = user?.id;
+  const token = localStorage.getItem("token");
+
+  const syncCartWithBackend = useCallback(async (updatedCart: CartItem[]) => {
+    if (!userId || !token) return;
+
+    try {
+      await fetch("http://localhost:5000/api/auth/updatecart", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ userId, cartItems: updatedCart }),
+      });
+    } catch (err) {
+      console.error("❌ Cart update failed:", err);
     }
-  }, []);
+  }, [userId, token]);
 
-  // Save cart to localStorage whenever it changes
+  
   useEffect(() => {
-    localStorage.setItem('cloudKitchenCart', JSON.stringify(items));
-  }, [items]);
+    const fetchCart = async () => {
+      if (!userId || !token) return;
 
-  const addItem = (item: Omit<CartItem, 'quantity'>) => {
-    setItems(prevItems => {
-      // Check if item already exists in cart
-      const existingItemIndex = prevItems.findIndex(i => i.id === item.id);
-      
-      if (existingItemIndex >= 0) {
-        // Item exists, increase quantity
-        const updatedItems = [...prevItems];
-        updatedItems[existingItemIndex].quantity += 1;
-        return updatedItems;
-      } else {
-        // Item doesn't exist, add new item with quantity 1
-        return [...prevItems, { ...item, quantity: 1 }];
+      try {
+        const response = await fetch("http://localhost:5000/api/auth/getcart", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await response.json();
+        if (data.success && data.cart) {
+          setItems(data.cart);
+        }
+      } catch (error) {
+        console.error("❌ Error loading cart:", error);
       }
+    };
+
+    fetchCart();
+  }, [userId, token]);
+
+  // ✅ **Add Item to Cart**
+  const addItem = (newItem: CartItem) => {
+    setItems((prevItems) => {
+      const existingItem = prevItems.find((item) => item._id === newItem._id);
+      let updatedCart;
+
+      if (existingItem) {
+        updatedCart = prevItems.map((item) =>
+          item._id === newItem._id ? { ...item, quantity: item.quantity + 1 } : item
+        );
+      } else {
+        updatedCart = [...prevItems, { ...newItem, quantity: 1 }];
+      }
+
+      syncCartWithBackend(updatedCart);
+      return updatedCart;
     });
   };
 
-  const removeItem = (id: number) => {
-    setItems(prevItems => prevItems.filter(item => item.id !== id));
+  
+  const removeItem = (_id: string) => {
+    setItems((prevItems) => {
+      const updatedCart = prevItems.filter((item) => item._id !== _id);
+      syncCartWithBackend(updatedCart);
+      return updatedCart;
+    });
   };
 
-  const updateQuantity = (id: number, quantity: number) => {
-    if (quantity <= 0) {
-      removeItem(id);
-      return;
-    }
-    
-    setItems(prevItems => 
-      prevItems.map(item => 
-        item.id === id ? { ...item, quantity } : item
-      )
-    );
+  const updateQuantity = (_id: string, quantity: number) => {
+    setItems((prevItems) => {
+      const updatedCart = prevItems.map((item) =>
+        item._id === _id ? { ...item, quantity: Math.max(1, quantity) } : item
+      );
+      syncCartWithBackend(updatedCart);
+      return updatedCart;
+    });
   };
 
+  
   const clearCart = () => {
     setItems([]);
+    syncCartWithBackend([]);
   };
 
-  const totalItems = items.reduce((total, item) => total + item.quantity, 0);
   
-  const totalPrice = items.reduce(
-    (total, item) => total + item.price * item.quantity, 
-    0
-  );
+  const totalItems = items.reduce((total, item) => total + item.quantity, 0);
+  const totalPrice = items.reduce((total, item) => total + item.price * item.quantity, 0);
 
   return (
-    <CartContext.Provider value={{
-      items,
-      addItem,
-      removeItem,
-      updateQuantity,
-      clearCart,
-      totalItems,
-      totalPrice
-    }}>
+    <CartContext.Provider
+      value={{
+        items,
+        addItem,
+        removeItem,
+        updateQuantity,
+        clearCart,
+        totalItems,
+        totalPrice,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );
 };
 
+// 🏷️ **Custom Hook for Using Cart Context**
 export const useCart = (): CartContextType => {
   const context = useContext(CartContext);
-  if (context === undefined) {
-    throw new Error('useCart must be used within a CartProvider');
+  if (!context) {
+    throw new Error("useCart must be used within a CartProvider");
   }
   return context;
 };

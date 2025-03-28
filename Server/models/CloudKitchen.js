@@ -1,7 +1,14 @@
 const mongoose = require("mongoose");
 
-// Embedded Schema for Menus
+const { v4: uuidv4 } = require("uuid"); // 🎯 UUID for unique IDs
+
+
 const MenuSchema = new mongoose.Schema({
+  id: { 
+    type: String, 
+    default: uuidv4, // 🔥 Generate Unique ID
+    unique: true,
+  },
   name: {
     type: String,
     required: true,
@@ -16,13 +23,13 @@ const MenuSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
-  ingredients:{
+  ingredients: {
     type: String,
     default: "",
   },
-  rating:{
+  rating: {
     type: Number,
-    default: 0
+    default: 0,
   },
   description: {
     type: String,
