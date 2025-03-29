@@ -277,7 +277,7 @@ exports.getUserCart = asyncHandler(async (req, res, next) => {
 });
 
 exports.AddUsercartToOrder = asyncHandler(async (req, res, next) => {
-  const { totalPrice, totalItems, paymentType, paymentStatus, items } = req.body;
+  const { totalPrice, totalItems, paymentType, paymentStatus, items,address } = req.body;
   console.log(req.body)
   const userId = req.user.id;
   const order = await OrderHistory.create({
@@ -286,7 +286,8 @@ exports.AddUsercartToOrder = asyncHandler(async (req, res, next) => {
     totalPrice,
     totalItems,
     paymentStatus,
-    paymentType
+    paymentType,
+    address
   });
   if (!order) {
     return next(new ErrorResponse('Order not created', 400));

@@ -6,11 +6,11 @@ const orderHistorySchema = new mongoose.Schema({
         ref: "User",
         required: true
     },
-  
-   
+
+
     items: [
         {
-            _id: { type: mongoose.Schema.Types.ObjectId,  required: true }, 
+            _id: { type: mongoose.Schema.Types.ObjectId, required: true },
             kitchenId: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "CloudKitchen",
@@ -27,24 +27,28 @@ const orderHistorySchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    totalItems:{
-        type:Number,
-        
+    totalItems: {
+        type: Number,
+
     },
     paymentStatus: {
         type: String,
         enum: ["Pending", "Completed"],
         default: "Pending"
     },
-    paymentType:{
-        type:String,
-        enum:["COD","Online"],
-        default:"COD"
+    paymentType: {
+        type: String,
+        enum: ["COD", "Online"],
+        default: "COD"
     },
     status: {
         type: String,
         enum: ["Pending", "Accepted", "Preparing", "On The Way", "Delivered", "Cancelled"],
         default: "Pending"
+    },
+    address: {
+        type: String,
+        default: ""
     },
     createdAt: {
         type: Date,
