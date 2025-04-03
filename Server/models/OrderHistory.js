@@ -50,6 +50,20 @@ const orderHistorySchema = new mongoose.Schema({
         type: String,
         default: ""
     },
+    RiderId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+    },
+    RiderAcceptedOrder: {
+        type: Boolean,
+        default: false
+    },
+
+    deliveryPrice: {
+        type: Number,
+        default: 0
+    },
+
     createdAt: {
         type: Date,
         default: Date.now

@@ -63,13 +63,14 @@ interface Order {
   _id: string;
   userId: string;
   email: string;
-  items: { name: string; quantity: number; price: number,image:string }[];
+  items: { name: string; quantity: number; price: number, image: string }[];
   totalQuantity: number;
   totalPrice: number;
   status: keyof typeof statusConfig;
   orderDate: string;
   orderTime: string;
   notes?: string;
+  deliveryPrice:Number;
 }
 
 function OrdersPage() {
@@ -80,6 +81,8 @@ function OrdersPage() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [deliveryPrice, setdeliveryPrice] = useState(0);
+  
 
   const fetchOrders = async () => {
     setIsRefreshing(true);
@@ -90,19 +93,19 @@ function OrdersPage() {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-  
+
       const data = await response.json();
-  
+
       if (data.orders) {
         // Orders ko bina kisi grouping ke direct set kar rahe hain
         const allOrders: Order[] = data.orders.map((order: any) => ({
-          _id:order._id,
+          _id: order._id,
           userId: order.userId._id,
           email: order.userId.email,
           items: order.items.map((item: any) => ({
             name: item.name,
             quantity: item.quantity,
-            image:item.image,
+            image: item.image,
             price: item.price,
           })),
           totalQuantity: order.items.reduce((sum: number, item: any) => sum + item.quantity, 0),
@@ -111,8 +114,9 @@ function OrdersPage() {
           orderDate: new Date(order.createdAt).toLocaleDateString(),
           orderTime: new Date(order.createdAt).toLocaleTimeString(),
           notes: order.notes || "None",
+          deliveryPrice: order.deliveryPrice,
         }));
-  
+
         setOrders(allOrders); // Directly orders ko set kar rahe hain
       }
     } catch (error) {
@@ -122,7 +126,7 @@ function OrdersPage() {
       setIsRefreshing(false);
     }
   };
-  
+
 
   useEffect(() => {
     fetchOrders();
@@ -132,6 +136,24 @@ function OrdersPage() {
 
   const handleStatusChange = async (orderId: string, newStatus: keyof typeof statusConfig) => {
     console.log(orderId, newStatus)
+    let delprice = deliveryPrice; // Use the state variable directly
+    if (newStatus === "On The Way") {
+      const deliveryprice = prompt("Please enter the delivery price:");
+  
+      // Check if the prompt returned null or an invalid number
+      if (deliveryprice === null || isNaN(Number(deliveryprice)) || deliveryprice === "") {
+        alert("Delivery price must be a valid number.");
+        return;
+      }
+  
+      // Convert the string input to a number and set it
+      delprice = Number(deliveryprice); // Temporarily update delprice directly
+    }
+  
+    // Alert to check if price is correctly passed
+    alert(delprice);
+    
+    
     try {
       const response = await fetch(`http://localhost:5000/api/kitchen/user/updateorderstatus`, {
         method: "PUT",
@@ -139,15 +161,18 @@ function OrdersPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ status: newStatus , id:orderId}),
+        body: JSON.stringify({ status: newStatus, id: orderId, deliveryPrice: delprice }), // Pass the new status and order ID
       });
 
+
+      
       if (response.ok) {
         setOrders(prevOrders =>
           prevOrders.map(order =>
-              order._id === orderId ? { ...order, status: newStatus } : order
+            order._id === orderId ? { ...order, status: newStatus } : order
           )
-      );
+        );
+        setdeliveryPrice(0)
       }
     } catch (error) {
       console.error("Error updating order status:", error);
@@ -174,7 +199,7 @@ function OrdersPage() {
               </div>
               <div>
                 <h3 className="md:text-sm text-xs lg:text-lg font-semibold text-gray-900">{order.email}</h3>
-                <p className="md:text-sm text-xs text-gray-500">Order #{order.userId.slice(-6)}</p>
+                <p className="md:text-sm text-xs text-gray-500">Order #{order._id.slice(-6)}</p>
               </div>
             </div>
             <div className="flex items-center space-x-2 sm:space-x-4">
@@ -182,25 +207,33 @@ function OrdersPage() {
                 <div className="flex  items-center space-x-1">
                   <StatusIcon className="w-3.5 h-3.5" />
                   <span className="text-xs font-medium">{order.status}
-                   
+
                   </span>
                 </div>
               </div>
-              <div className="relative flex-shrink-0">
-                <select
-                  value={order.status}
-                  onChange={(e) => handleStatusChange(order._id, e.target.value as keyof typeof statusConfig)}
-                  className={`appearance-none ${statusConfig[order.status].class} pl-9 pr-8 py-2 rounded-lg border font-medium text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors`}
-                >
-                  {Object.keys(statusConfig).map((status) => (
-                    <option key={status} value={status}>
-                      {status}
-                    </option>
-                  ))}
-                </select>
-                <StatusIcon className={`absolute left-2.5 top-2.5 w-4 h-4 ${statusConfig[order.status].iconClass}`} />
-                <ChevronDown className="absolute right-2 top-2.5 w-4 h-4 text-white" />
-              </div>
+              {
+                order.status !== "Delivered" &&
+                <div className="relative flex-shrink-0">
+                  <select
+                    value={order.status}
+                    onChange={(e) => handleStatusChange(order._id, e.target.value as keyof typeof statusConfig)}
+                    className={`appearance-none ${statusConfig[order.status].class} pl-9 pr-8 py-2 rounded-lg border font-medium text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors`}
+                  >
+                    {Object.keys(statusConfig)
+                      .filter((status) => status !== "Delivered") // "Delivered" کو dropdown میں show نہ کرو
+                      .map((status) => (
+                        <option key={status} value={status}>
+                          {status}
+                        </option>
+                      ))}
+                  </select>
+                  <StatusIcon className={`absolute left-2.5 top-2.5 w-4 h-4 ${statusConfig[order.status].iconClass}`} />
+                  <ChevronDown className="absolute right-2 top-2.5 w-4 h-4 text-white" />
+                </div>
+              }
+
+
+
             </div>
           </div>
         </div>
@@ -215,16 +248,16 @@ function OrdersPage() {
                 <ul className="space-y-2">
                   {order.items.map((item, index) => (
                     <li key={index} className="flex items-center justify-between space-x-4 text-sm p-2 border-b">
-                    {/* Image Wrapper */}
-                    <div className="flex items-center space-x-3 flex-1">
-                      <img src={item.image} alt={item.name} className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-lg" />
-                      <span className="text-gray-600 text-xs sm:text-sm">{item.name} × {item.quantity}</span>
-                    </div>
-                  
-                    {/* Price */}
-                    <span className="font-medium text-xs sm:text-sm">${(item.price * item.quantity).toFixed(2)}</span>
-                  </li>
-                  
+                      {/* Image Wrapper */}
+                      <div className="flex items-center space-x-3 flex-1">
+                        <img src={item.image} alt={item.name} className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-lg" />
+                        <span className="text-gray-600 text-xs sm:text-sm">{item.name} × {item.quantity}</span>
+                      </div>
+
+                      {/* Price */}
+                      <span className="font-medium text-xs sm:text-sm">${(item.price * item.quantity).toFixed(2)}</span>
+                    </li>
+
                   ))}
                 </ul>
                 <div className="mt-4 pt-4 border-t border-orange-100">

@@ -195,18 +195,21 @@ const getAllOrderofSpecificUser = async (req, res) => {
 
 const updateuserOrderStatus = async (req, res) => {
   try {
-    // const { id } = req.params; 
-    const { status,id } = req.body;
-    console.log(id,status)
+    const { status, id, deliveryPrice } = req.body;
+    console.log(id, status, deliveryPrice);
 
-    // ✅ Update order status
+    const updateData = {
+      ...(status && { status }),
+      ...(deliveryPrice && { deliveryPrice }),
+    };
+
     const updatedOrder = await OrderHistory.findByIdAndUpdate(
       { _id: id },
-      { status },
-      { new: true } 
+      updateData,
+      { new: true }
     );
-    
-    console.log(updatedOrder)
+
+    console.log(updatedOrder);
     if (!updatedOrder) {
       return res.status(404).json({ error: "Order not found" });
     }
@@ -216,6 +219,7 @@ const updateuserOrderStatus = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
 
 
 // ✅ CommonJS Export

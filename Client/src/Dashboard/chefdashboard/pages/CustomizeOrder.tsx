@@ -162,21 +162,27 @@ function App() {
                   <span className="text-xs font-medium">{order.status}</span>
                 </div>
               </div>
-              <div className="relative flex-shrink-0">
-                <select
-                  value={order.status}
-                  onChange={(e) => updateOrder(order.id, { status: e.target.value as keyof typeof statusConfig })}
-                  className={`appearance-none ${statusConfig[order.status].class} pl-9 pr-8 py-2 rounded-lg border font-medium text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors`}
-                >
-                  {Object.keys(statusConfig).map((status) => (
-                    <option key={status} value={status}>
-                      {status}
-                    </option>
-                  ))}
-                </select>
-                <StatusIcon className={`absolute left-2.5 top-2.5 w-4 h-4 ${statusConfig[order.status].iconClass}`} />
-                <ChevronDown className="absolute right-2 top-2.5 w-4 h-4 text-white" />
-              </div>
+              {order.status !== "Delivered" && (
+  <div className="relative flex-shrink-0">
+    <select
+      value={order.status}
+      onChange={(e) => updateOrder(order.id, { status: e.target.value as keyof typeof statusConfig })}
+      className={`appearance-none ${statusConfig[order.status].class} pl-9 pr-8 py-2 rounded-lg border font-medium text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors`}
+    >
+      {Object.keys(statusConfig)
+        .filter((status) => status !== "Delivered") // "Delivered" کو dropdown میں show نہ کرو
+        .map((status) => (
+          <option key={status} value={status}>
+            {status}
+          </option>
+        ))}
+    </select>
+    <StatusIcon className={`absolute left-2.5 top-2.5 w-4 h-4 ${statusConfig[order.status].iconClass}`} />
+    <ChevronDown className="absolute right-2 top-2.5 w-4 h-4 text-white" />
+  </div>
+)}
+
+
             </div>
           </div>
         </div>
@@ -279,8 +285,8 @@ function App() {
           <button
             onClick={() => setActiveFilter('all')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeFilter === 'all'
-                ? 'bg-orange-500 text-white shadow-sm'
-                : 'bg-white text-gray-600 hover:bg-gray-50'
+              ? 'bg-orange-500 text-white shadow-sm'
+              : 'bg-white text-gray-600 hover:bg-gray-50'
               }`}
           >
             All Orders
@@ -290,8 +296,8 @@ function App() {
               key={status}
               onClick={() => setActiveFilter(status as keyof typeof statusConfig)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-2 ${activeFilter === status
-                  ? 'bg-orange-500 text-white shadow-sm'
-                  : 'bg-white text-gray-600 hover:bg-gray-50'
+                ? 'bg-orange-500 text-white shadow-sm'
+                : 'bg-white text-gray-600 hover:bg-gray-50'
                 }`}
             >
               <config.icon className={`w-4 h-4 ${activeFilter === status ? 'text-white' : 'text-orange-500'}`} />

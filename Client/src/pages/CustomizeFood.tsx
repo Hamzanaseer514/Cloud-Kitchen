@@ -14,12 +14,14 @@ const CustomizeFood: React.FC = () => {
     servingSize: "Single",
     ingredients: "",
     specialInstructions: "",
+    address:""
   });
 
   const [errors, setErrors] = useState({
     dishName: "",
     ingredients: "",
     specialInstructions: "",
+    address:""
   });
 
   // Handle input changes
@@ -36,7 +38,7 @@ const CustomizeFood: React.FC = () => {
   // ✅ Validation Function
   const validateForm = () => {
     let valid = true;
-    let newErrors = { dishName: "", ingredients: "", specialInstructions: "" };
+    let newErrors = { dishName: "", ingredients: "", specialInstructions: "",address:"" };
 
     if (!formData.dishName.trim()) {
       newErrors.dishName = "Dish name is required";
@@ -48,6 +50,10 @@ const CustomizeFood: React.FC = () => {
     }
     if (!formData.specialInstructions.trim()) {
       newErrors.specialInstructions = "Special instructions are required";
+      valid = false;
+    }
+    if (!formData.address.trim()) {
+      newErrors.address = "Address is  required";
       valid = false;
     }
 
@@ -67,6 +73,11 @@ const CustomizeFood: React.FC = () => {
     };
 
     try {
+      // const address = prompt("Please enter your address:");
+      // if (!address) {
+      //   alert("Address is required for delivery.");
+      //   return;
+      // }
       const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -178,6 +189,18 @@ const CustomizeFood: React.FC = () => {
                 className="w-full p-2 sm:p-3 border rounded-md focus:ring-2 focus:ring-orange-400 outline-none"
               />
               {errors.ingredients && <p className="text-red-500 text-xs mt-1">{errors.ingredients}</p>}
+            </div>
+            <div className="col-span-1 sm:col-span-2">
+              <label className="text-sm font-semibold text-gray-600">Address</label>
+              <input
+                type="text"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                placeholder="Enter your address"
+                className="w-full p-2 sm:p-3 border rounded-md focus:ring-2 focus:ring-orange-400 outline-none"
+              />
+              {errors.ingredients && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
             </div>
 
             {/* Special Instructions */}

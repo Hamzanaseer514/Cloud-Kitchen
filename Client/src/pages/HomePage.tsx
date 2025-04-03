@@ -5,6 +5,7 @@ import FeaturedChefs from '../components/home/FeaturedChefs';
 import HowItWorks from '../components/home/HowItWorks';
 import Testimonials from '../components/home/Testimonials';
 import PopularKitchens from '../components/home/PopularKitchens';
+import CustomerPremium from '../components/home/CustomerPremium';
 
 const HomePage: React.FC = () => {
   return (
@@ -14,6 +15,7 @@ const HomePage: React.FC = () => {
       <PopularKitchens/>
       <HowItWorks />
       <FeaturedChefs />
+      <CustomerPremium/>
       <Testimonials />
     </div>
   );
