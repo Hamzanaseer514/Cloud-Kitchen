@@ -12,7 +12,7 @@ const HomePage: React.FC = () => {
     <div>
       <Hero />
       {/* <PopularDishes /> */}
-      <PopularKitchens/>
+      <PopularKitchens length={6}/>
       <HowItWorks />
       <FeaturedChefs />
       <CustomerPremium/>

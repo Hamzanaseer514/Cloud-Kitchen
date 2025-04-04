@@ -4,8 +4,9 @@ import { Star, Clock } from "lucide-react";
 import Button from "../ui/Button";
 import { KitchenContext } from "../../context/KitchenContext";
 
-const PopularKitchens = () => {
+const PopularKitchens = (props) => {
   const { kitchens, loading, error } = useContext(KitchenContext);
+  
 
   if (loading) return <p className="text-center">Loading kitchens...</p>;
   if (error) return <p className="text-center text-red-500">Error: {error}</p>;
@@ -27,7 +28,7 @@ const PopularKitchens = () => {
           {kitchens.filter(kitchen => kitchen.approve === "yes").slice(0, 6).length > 0 ? (
             kitchens
               .filter(kitchen => kitchen.approve === "yes") 
-              .slice(0, 6) // ✅ Sirf first 6 kitchens show hongi
+              .slice(0, props.length === 6 ? 6:kitchens.length) // ✅ Sirf first 6 kitchens show hongi
               .map((kitchen) => (
                 <Link to={`/kitchen/${kitchen._id}`} key={kitchen._id}> 
                   <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
@@ -61,7 +62,7 @@ const PopularKitchens = () => {
                       {/* Rating & Timings */}
                       <div className="flex items-center mt-2 text-gray-600 text-sm">
                         <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                        <span className="ml-1">{kitchen.rating.toFixed(1)}</span>
+                        {/* <span className="ml-1">{kitchen.rating.toFixed(1)}</span> */}
                         <span className="mx-2 text-gray-400">•</span>
                         <Clock className="h-4 w-4 mr-1" />
                         {kitchen.openingTime} - {kitchen.closingTime}

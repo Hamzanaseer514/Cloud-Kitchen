@@ -86,20 +86,29 @@ const getOrdersWithRiderInfo = async (req, res) => {
         // 1. User ki ID se chef ka kitchenId fetch karo
         const userId = req.user.id;
         const user = await CloudKitchen.findOne({ owner: userId });
+        console.log('User:', user); // Debugging line
 
         if (!user) {
             return res.status(404).json({ message: 'Kitchen not found for this user' });
         }
 
-        const kitchenId = user.kitchenId;
+        const kitchenId = user._id;
+        console.log('Kitchen ID:', kitchenId); // Debugging line
 
         // Kitchen ID ke saath related orders fetch karo
-        const orders = await OrderHistory.find({ kitchenId: kitchenId })
-            .populate({
-                path: 'RiderId',
-                select: 'fullname email phone', // ✅ Pehle sirf User populate karna hai
-            })
-            .lean();
+        const orders = await OrderHistory.find({
+            items: {
+              $elemMatch: {
+                kitchenId: kitchenId
+              }
+            }
+          })
+          .populate({
+            path: 'RiderId',
+            select: 'fullname email phone'
+          })
+          .lean();
+          
 
         console.log('Step 1 - Orders with Riders:', JSON.stringify(orders, null, 2));
         const riderIds = orders.map(order => order.RiderId?._id).filter(id => id);
@@ -122,6 +131,7 @@ const getOrdersWithRiderInfo = async (req, res) => {
           
             return {
               orderId: order._id,
+              orderItems: order.items,
               orderStatus: order.status,
               RiderName: order.RiderId?.fullname || 'N/A',
               RiderEmail: order.RiderId?.email || 'N/A',

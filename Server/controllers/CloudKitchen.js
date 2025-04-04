@@ -13,7 +13,6 @@ const registerKitchen = async (req, res) => {
       kitchenLogo,
       approve,
       status,
-      rating,
     } = req.body;
     console.log(kitchenLogo,userImage)
 
@@ -35,7 +34,6 @@ const registerKitchen = async (req, res) => {
       kitchenLogo,
       status,
       approve,
-      rating,
       menues,
     });
 
@@ -220,6 +218,50 @@ const updateuserOrderStatus = async (req, res) => {
   }
 };
 
+//// Review Functionality ////
+// ✅ Add a review to a kitchen
+
+const addKitchenReview = async(req,res) => {
+  try {
+    const { kitchenId, rating, comment } = req.body;
+    const userId = req.user.id; // JWT se user ID lena
+    // console.log(req.body)
+
+    // Kitchen ko find karo
+    const kitchen = await Kitchen.findById(kitchenId);
+    if (!kitchen) {
+      return res.status(404).json({ message: "Kitchen not found!" });
+    }
+
+    // Review ko kitchen ke reviews array me push karo
+    kitchen.reviews.push({ userId, rating, comment });
+    await kitchen.save();
+    // console.log(kitchen)
+
+    res.status(200).json({ message: "Review added successfully!", kitchen });
+  } catch (error) {
+    res.status(500).json({ message: "Server error!", error: error.message });
+  }
+}
+
+const fetchReviewOfSpecificKitchen = async (req, res) => {
+  try {
+    const kitchenId = req.params.id; // Kitchen ID from request params
+
+    // Kitchen ko find karo
+    const kitchen = await Kitchen.findById(kitchenId).populate("reviews.userId", "fullname email"); // Populate user details
+
+    if (!kitchen) {
+      return res.status(404).json({ message: "Kitchen not found!" });
+    }
+    console.log(kitchen.reviews)
+    res.status(200).json(kitchen.reviews); // Return the reviews array
+  } catch (error) {
+    res.status(500).json({ message: "Server error!", error: error.message });
+  }
+}
+
+
 
 
 // ✅ CommonJS Export
@@ -234,5 +276,7 @@ module.exports = {
   getKitchenMenus,
   GetAllOrderAccordingToKitchen,
   updateuserOrderStatus,
-  getAllOrderofSpecificUser
+  getAllOrderofSpecificUser,
+  addKitchenReview,
+  fetchReviewOfSpecificKitchen
 };
