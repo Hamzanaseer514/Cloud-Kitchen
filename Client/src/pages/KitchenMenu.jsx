@@ -170,7 +170,7 @@ const KitchenMenu = () => {
                     ))}
                 </div>
             </div>
-            {/* <Review /> */}
+            <Review />
         </div>
     );
 };

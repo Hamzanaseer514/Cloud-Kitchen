@@ -41,6 +41,25 @@ const MenuSchema = new mongoose.Schema({
   },
 });
 
+const reviewsSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  rating: {
+    type: Number,
+    required: true,
+  },
+  comment: {
+    type: String,
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+}); 
+
 // Kitchen Schema
 const KitchenSchema = new mongoose.Schema(
   {
@@ -84,9 +103,9 @@ const KitchenSchema = new mongoose.Schema(
       enum: ["yes", "no"],
       default: "no",
     },
-    rating: {
-      type: Number,
-      default: 0,
+    reviews: {
+      type: [reviewsSchema],
+      default: [],
     },
     menus: {
       type: [MenuSchema], // 👈 Array of menu items

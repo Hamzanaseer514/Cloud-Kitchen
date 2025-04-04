@@ -50,13 +50,19 @@ const CartPage = () => {
   const addOrdertoUserOrder = async (paymentStatus: string, paymentType: String) => {
     console.log("hamza")
     try {
+      const address = prompt("Please enter your address:");
+      if (!address) {
+        alert("Address is required for delivery.");
+        return;
+      }
+      
       const response = await fetch("http://localhost:5000/api/auth/adduserorder", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ items, paymentStatus, paymentType, totalPrice, totalItems }), // Ensure this matches backend expectations
+        body: JSON.stringify({ items, paymentStatus, paymentType, totalPrice, totalItems,address}), // Ensure this matches backend expectations
       });
       if (!response.ok) {
         throw new Error(`HTTP Error! Status: ${response.status}`); // Handle errors properly
