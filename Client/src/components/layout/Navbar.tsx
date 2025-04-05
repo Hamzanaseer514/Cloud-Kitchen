@@ -130,9 +130,11 @@ const Navbar: React.FC = () => {
               </>
             ) : (
               <>
-                <Link to="/chef-register">
-                  <Button size="sm" variant="secondary">Register your Kitchen</Button>
-                </Link>
+                {user?.role !== 'chef' && (
+                  <Link to="/chef-register">
+                    <Button size="sm" variant="secondary">Register your Kitchen</Button>
+                  </Link>
+                )}
                 <Link to="/login">
                   <Button variant="outline" size="sm" className='hover:bg-orange-500 hover:text-white hover:border-white border border-gray-500'>
                     Log in

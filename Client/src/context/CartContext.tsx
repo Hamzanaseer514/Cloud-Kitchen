@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { useAuth } from "./AuthContext"; // path adjust kar lena
+
 
 export type CartItem = {
   _id: string;
@@ -30,9 +32,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [items, setItems] = useState<CartItem[]>([]);
 
 
-  const user = JSON.parse(localStorage.getItem("cloudKitchenUser") || "{}");
-  const userId = user?.id;
-  const token = localStorage.getItem("token");
+  const { user } = useAuth();
+const userId = user?.id;
+const token = localStorage.getItem("token");
+
 
   const syncCartWithBackend = useCallback(async (updatedCart: CartItem[]) => {
     if (!userId || !token) return;

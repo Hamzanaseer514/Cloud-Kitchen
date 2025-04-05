@@ -9,7 +9,8 @@ const {
     updateuserOrderStatus,
     getAllOrderofSpecificUser,
     addKitchenReview,
-    fetchReviewOfSpecificKitchen
+    fetchReviewOfSpecificKitchen,
+    getAllReviewsOfKitchen
 
 } = require('../controllers/CloudKitchen');
 
@@ -34,5 +35,6 @@ router.put("/user/updateorderstatus",updateuserOrderStatus)
 router.get("/user/getAllOrder",protect,getAllOrderofSpecificUser),
 router.post("/user/review",protect,addKitchenReview)
 router.get("/getreview/:id",fetchReviewOfSpecificKitchen)
+router.get("/chkreview/all",getAllReviewsOfKitchen)
 
 module.exports = router; // ✅ Correct spelling

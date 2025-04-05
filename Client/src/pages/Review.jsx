@@ -506,10 +506,10 @@ export default function Review() {
               <div key={review._id} className="border border-gray-100 p-6 rounded-xl shadow-sm bg-white hover:shadow-md transition-shadow">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <p className="font-bold text-gray-800 text-lg">
+                    <p className="font-bold text-gray- text-sm sm:text-lg">
                       {review?.userId?.fullname || 'Anonymous'}
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-xs sm:text-sm text-gray-500">
                       {review?.userId?.email || 'No email'}
                     </p>
                     <div className="flex items-center mt-2">
@@ -523,7 +523,7 @@ export default function Review() {
                       ))}
                     </div>
                   </div>
-                  <p className="text-sm text-gray-400">{formatDate(review.createdAt)}</p>
+                  <p className="text-xs sm:text-sm text-gray-400">{formatDate(review.createdAt)}</p>
                 </div>
                 <p className="text-gray-700 leading-relaxed">{review.comment}</p>
               </div>

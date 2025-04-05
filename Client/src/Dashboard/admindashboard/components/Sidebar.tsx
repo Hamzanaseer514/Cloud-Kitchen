@@ -17,6 +17,7 @@ export function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
     { icon: CookingPot, label: 'Kitchen Approval', path: '/admin-dashboard/kitchen-approval' },
     { icon: Bike, label: 'Add Rider', path: '/admin-dashboard/add-rider' },
     { icon: Users, label: 'User', path: '/admin-dashboard/users' },
+    { icon: Users, label: 'Kitchen Reviews', path: '/admin-dashboard/reviews' },
     { icon: Settings, label: 'Settings', path: '/admin-dashboard/settings' },
     
 

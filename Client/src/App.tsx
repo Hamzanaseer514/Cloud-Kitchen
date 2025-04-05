@@ -28,6 +28,7 @@ import { AdminSettings } from './Dashboard/admindashboard/pages/AdminSettings';
 import AdminDashboard from './Dashboard/admindashboard/pages/AdminDashboard';
 import AddRider from './Dashboard/admindashboard/pages/AddRider';
 import ProtectedRoute from './components/auth/ProtectedRoute.js';
+import CheckReviewsOfkitchen from "./Dashboard/admindashboard/pages/CheckReviewsOfKitchen.jsx"
 import UnauthorizedPage from './components/auth/UnauthorizedPage.jsx';
 import KitchenMenu from './pages/KitchenMenu.jsx';
 
@@ -84,9 +85,12 @@ const AppContent: React.FC = () => {
           <Route element={<ProtectedRoute requiredRole="customer" />}>
             <Route path="/kitchen/:id" element={<KitchenMenu />} />
           </Route>
-          <Route path='/kitchen/:id/customize-food' element={<CustomizeFood/>}/>
-          <Route path='/cart' element={<CartPage/>}/>
-          <Route path="/success" element={<PaymentSuccess/>} />
+          <Route element={<ProtectedRoute requiredRole="customer" />}>
+            <Route path='/cart' element={<CartPage />} />
+          </Route>
+          <Route path='/kitchen/:id/customize-food' element={<CustomizeFood />} />
+          <Route path='/cart' element={<CartPage />} />
+          <Route path="/success" element={<PaymentSuccess />} />
           <Route path="/customer-dashboard" element={<GetCustomerOrder />} />
 
 
@@ -114,6 +118,7 @@ const AppContent: React.FC = () => {
               <Route index element={<AdminDashboard />} />
               <Route path="kitchen-approval" element={<KitchenApproval />} />
               <Route path="users" element={<Users />} />
+              <Route path="reviews" element={<CheckReviewsOfkitchen />} />
               <Route path="settings" element={<AdminSettings />} />
               <Route path="add-rider" element={<AddRider />} />
             </Route>

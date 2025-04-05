@@ -181,7 +181,7 @@ const getAllOrderofSpecificUser = async (req, res) => {
     // Ensure orders are fetched properly
     const orders = await OrderHistory.find({ userId: userId });
 
-    if (!orders || orders.length === 0) {
+    if (!orders) {
       return res.status(404).json({ message: "Orders not found", success: false });
     }
 
@@ -261,6 +261,20 @@ const fetchReviewOfSpecificKitchen = async (req, res) => {
   }
 }
 
+const getAllReviewsOfKitchen = async (req,res) => {
+try {
+  const kitchen = await Kitchen.find({}).populate("reviews.userId", "fullname email"); // Populate user details
+  if (!kitchen) {
+    return res.status(404).json({ message: "Kitchen not found!" });
+  }
+
+  console.log(kitchen)
+  return res.status(201).json({message:"all kitchens",kitchen})
+} catch (error) {
+  return res.status(500).json({ message: "Server error!", error: error.message });``
+}
+}
+
 
 
 
@@ -278,5 +292,6 @@ module.exports = {
   updateuserOrderStatus,
   getAllOrderofSpecificUser,
   addKitchenReview,
-  fetchReviewOfSpecificKitchen
+  fetchReviewOfSpecificKitchen,
+  getAllReviewsOfKitchen
 };
