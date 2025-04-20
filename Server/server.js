@@ -16,7 +16,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 app.use(
   cors({
-    origin: "http://localhost:5173", // React frontend
+    origin: "https://hncloudkitchen.netlify.app", // React frontend
     // origin: process.env.CLIENT_URL, 
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
