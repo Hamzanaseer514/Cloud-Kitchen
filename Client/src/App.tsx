@@ -42,6 +42,7 @@ import CartPage from './pages/CartPage.js';
 import PaymentSuccess from './pages/PaymentSuccess.jsx';
 import PopularKitchens from './components/home/PopularKitchens.jsx';
 import GetCustomerOrder from './pages/GetCustomerOrder.jsx';
+import ComplaintKitchen from './Dashboard/riderdashboard/pages/ComplaintKitchen.js';
 
 
 
@@ -131,6 +132,7 @@ const AppContent: React.FC = () => {
               <Route path="earning" element={<Earning />} />
               <Route path="order-history" element={<OrderHistory />} />
               <Route path="settings" element={<RiderSettings />} />
+              <Route path="ComplaintKitchen" element={<ComplaintKitchen />} />
             </Route>
           </Route>
         </Routes>

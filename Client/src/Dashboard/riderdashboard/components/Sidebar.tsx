@@ -15,6 +15,7 @@ export function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
     { icon: HistoryIcon, label: 'Order History', path: '/rider-dashboard/order-history' },
     { icon: DollarSign, label: 'Earning', path: '/rider-dashboard/earning' },
     { icon: Settings, label: 'Settings', path: '/rider-dashboard/settings' },
+    { icon: Settings, label: 'Complaint Kitchen', path: '/rider-dashboard/ComplaintKitchen' },
     
 
   ];
