@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import API_BASE_URL from "../utils/config"; // Adjust the import path as necessary
 
 const statusColors = {
   Pending: "bg-yellow-500 text-white",
@@ -16,7 +17,7 @@ const GetCustomerOrder = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/kitchen/user/getAllOrder",{
+        const response = await fetch(`${API_BASE_URL}/api/kitchen/user/getAllOrder`,{
             headers:{
                 Authorization:`Bearer ${localStorage.getItem("token")}`
             }

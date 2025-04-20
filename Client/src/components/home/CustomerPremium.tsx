@@ -1,3 +1,4 @@
+import API_BASE_URL from '../../utils/config';
 import React from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { loadStripe } from "@stripe/stripe-js";
@@ -8,37 +9,40 @@ const stripePromise = loadStripe("pk_test_51QM8InGrY1JqG9Bl9huwlyiEbRMfBJ1L53aH5
 // Plans with correct price format (numbers)
 const plans = [
   {
-    name: "Weekly",
-    price: 999, 
+    displayName: "Weekly",     // what user sees
+    internalName: "Basic",     // what backend/Stripe sees
+    price: 999,
     duration: "Per Week",
     features: ["4 Free Delivery", "Exclusive Discounts", "Priority Support"],
   },
   {
-    name: "Monthly",
+    displayName: "Monthly",
+    internalName: "Advance",
     price: 1700,
     duration: "Per Month",
-    features: ["All Weekly Benefits", "Access to New Dishes", "AI Chatbot Support"],
+    features: ["All Basic Benefits", "Access to New Dishes", "AI Chatbot Support"],
   },
   {
-    name: "Yearly",
+    displayName: "Yearly",
+    internalName: "Pro",
     price: 4999,
     duration: "Per Year",
-    features: ["All Monthly Benefits", "Special Offers", "VIP Customer Support"],
+    features: ["All Advance Benefits", "Special Offers", "VIP Customer Support"],
   },
 ];
+
 
 const CustomerPremium: React.FC = () => {
   const handleCheckout = async (planName: string, price: number) => {
     const stripe = await stripePromise;
     // Make a request to your backend to create the checkout session
-    const response = await fetch("http://localhost:5000/api/customer-plan-payment/create-checkout-session", {
+    const response = await fetch(`${API_BASE_URL}/api/customer-plan-payment/create-checkout-session`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ planName, price }),
     });
-
     if (!response.ok) {
       console.error("Failed to create checkout session:", await response.text());
       return;
@@ -48,16 +52,42 @@ const CustomerPremium: React.FC = () => {
     await stripe?.redirectToCheckout({ sessionId: session.id });
   };
 
+  const saveUserSubscription = async (planName: string, price: number) => {
+    try {
+    const response = await fetch(`${API_BASE_URL}/api/auth/saveUserSubscriptions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({ planName, price }),
+    });
+
+    if (!response.ok) {
+      console.error("Failed to save user subscription:", await response.text());
+      return;
+    }
+
+    const data = await response.json(); 
+    console.log("User subscription saved:", data);
+    alert("User subscription saved successfully");
+  } catch (error) {
+    console.error("Error saving user subscription:", error);
+  }
+  };
+  
+
+
   return (
     <div className="flex flex-col md:flex-row justify-center items-center min-h-screen bg-orange-50 gap-6 p-4">
       {plans.map((plan, index) => (
         <div
           key={index}
           className={`bg-white shadow-lg rounded-2xl p-6 max-w-sm border-t-4 ${
-            plan.name === "Monthly" ? "border-orange-500 scale-105" : "border-gray-300"
+            plan.displayName === "Monthly" ? "border-orange-500 scale-105" : "border-gray-300"
           } hover:shadow-xl transition`}
         >
-          <h2 className="text-2xl font-bold text-orange-500 text-center">{plan.name} Plan</h2>
+          <h2 className="text-2xl font-bold text-orange-500 text-center">{plan.displayName} Plan</h2>
           <p className="text-gray-600 text-center mt-2">{plan.duration}</p>
 
           <div className="mt-4">
@@ -73,7 +103,10 @@ const CustomerPremium: React.FC = () => {
           <div className="mt-6 text-center">
             <p className="text-3xl font-bold text-orange-500">{plan.price} PKR</p> {/* Added "PKR" separately */}
             <button 
-              onClick={() => handleCheckout(plan.name, plan.price)} 
+              onClick={() => {
+                handleCheckout(plan.internalName, plan.price);
+                saveUserSubscription(plan.internalName, plan.price);
+              }} 
               className="mt-4 bg-orange-500 text-white py-2 px-6 rounded-lg font-semibold hover:bg-orange-600 transition">
               Choose Plan
             </button>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import API_BASE_URL from "../../../utils/config";
 import {
   ChefHat,
   Clock,
@@ -87,7 +88,7 @@ function OrdersPage() {
   const fetchOrders = async () => {
     setIsRefreshing(true);
     try {
-      const response = await fetch("http://localhost:5000/api/kitchen/user/allorders", {
+      const response = await fetch(`${API_BASE_URL}/api/kitchen/user/allorders`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -155,7 +156,7 @@ function OrdersPage() {
     
     
     try {
-      const response = await fetch(`http://localhost:5000/api/kitchen/user/updateorderstatus`, {
+      const response = await fetch(`${API_BASE_URL}/api/kitchen/user/updateorderstatus`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

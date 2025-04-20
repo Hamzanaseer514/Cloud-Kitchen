@@ -1,7 +1,10 @@
-require('dotenv').config();
+const dotenv = require('dotenv');
 const express = require('express');
 const Stripe = require('stripe');
 const router = express.Router();
+
+dotenv.config();
+
 
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -34,8 +37,8 @@ router.post('/create-checkout-session', async (req, res) => {
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
-      success_url: 'http://localhost:5173/success',
-      cancel_url: 'http://localhost:3000/cancel',
+      success_url: `${process.env.CLIENT_URL}/success`,
+      cancel_url: `${process.env.CLIENT_URL}/cancel`,
     });
 
     console.log("✅ Stripe Checkout Session Created:", session.url); // Debug 

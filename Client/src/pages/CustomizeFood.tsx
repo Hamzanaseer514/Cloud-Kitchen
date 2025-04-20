@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import GetCustomerCustomizeOrder from "./GetCustomerCustomizeOrder";
+import API_BASE_URL from "../utils/config";
 
 const CustomizeFood: React.FC = () => {
   const navigate = useNavigate();
@@ -65,7 +66,7 @@ const CustomizeFood: React.FC = () => {
   const handleSubmit = async () => {
     if (!validateForm()) return;
 
-    const apiUrl = "http://localhost:5000/api/kitchen/addcustomorder"; // API endpoint
+    const apiUrl = `${API_BASE_URL}/api/kitchen/addcustomorder`; // API endpoint
 
     const requestBody = {
       ...formData,

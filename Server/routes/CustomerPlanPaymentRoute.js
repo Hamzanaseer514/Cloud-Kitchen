@@ -1,8 +1,9 @@
-require('dotenv').config();
 const express = require("express");
+const dotenv = require("dotenv");
 const Stripe = require("stripe");
 const router = express.Router();
 
+dotenv.config(); // Load environment variables from .env file
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 // Create a checkout session
@@ -14,6 +15,7 @@ router.post("/create-checkout-session", async (req, res) => {
       return res.status(400).json({ error: "Missing plan name or price" });
     }
 
+    console.log("🌐 CLIENT_URL from .env:", process.env.CLIENT_URL);
 
     const amount = Math.round(price * 100);  
 
@@ -37,14 +39,15 @@ router.post("/create-checkout-session", async (req, res) => {
           },
         ],
         mode: "payment",
-        success_url: "http://localhost:3000/success",
-        cancel_url: "http://localhost:3000/cancel",
+        success_url: `${process.env.CLIENT_URL}/success`,
+      cancel_url: `${process.env.CLIENT_URL}/cancel`,
         metadata: {
           planName: planName,
           price: price,
         },
       });
       
+      console.log("✅ Stripe Checkout Session Created:", `${process.env.CLIENT_URL}/success`), // Debug
 
 
     res.json({ id: session.id }); 

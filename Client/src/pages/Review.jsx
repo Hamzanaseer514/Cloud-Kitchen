@@ -309,6 +309,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Star, Users, MessageSquare, Award } from 'lucide-react';
+import  API_BASE_URL  from '../utils/config'; // Adjust the import based on your project structure
 
 export default function Review() {
   const { id } = useParams();
@@ -334,7 +335,7 @@ export default function Review() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:5000/api/kitchen/user/review`, {
+      const response = await fetch(`${API_BASE_URL}/api/kitchen/user/review`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -362,7 +363,7 @@ export default function Review() {
   // Fetch Reviews
   const fetchReviews = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/kitchen/getreview/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/kitchen/getreview/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

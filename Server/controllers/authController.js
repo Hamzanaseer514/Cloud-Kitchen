@@ -296,8 +296,58 @@ exports.AddUsercartToOrder = asyncHandler(async (req, res, next) => {
 });
 
 
+exports.saveUserSubscription = asyncHandler(async (req, res, next) => {
+  const { planName, price } = req.body;
+  const userId = req.user.id;
 
+  // Convert internal planName to enum plan
+  const planMap = {
+    Basic: 'Basic',
+    Advance: 'Advance',
+    Pro: 'Pro',
+  };
 
+  const selectedPlan = planMap[planName];
+
+  if (!selectedPlan) {
+    return res.status(400).json({ message: 'Invalid plan name' });
+  }
+
+  const now = new Date();
+  let endDate = new Date(now);
+
+  if (selectedPlan === 'Basic') {
+    endDate.setDate(endDate.getDate() + 7); // Weekly
+  } else if (selectedPlan === 'Advance') {
+    endDate.setMonth(endDate.getMonth() + 1); // Monthly
+  } else if (selectedPlan === 'Pro') {
+    endDate.setFullYear(endDate.getFullYear() + 1); // Yearly
+  }
+
+  const user = await User.findByIdAndUpdate(
+    userId,
+    {
+      subscription: {
+        isPremium: true,
+        price,
+        plan: selectedPlan,
+        startDate: now,
+        endDate,
+      },
+    },
+    { new: true }
+  );
+
+  if (!user) {
+    return next(new ErrorResponse('User not found', 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    message: `Subscription plan '${selectedPlan}' saved successfully.`,
+    subscription: user.subscription,
+  });
+});
 
 
 

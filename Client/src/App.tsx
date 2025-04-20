@@ -31,7 +31,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute.js';
 import CheckReviewsOfkitchen from "./Dashboard/admindashboard/pages/CheckReviewsOfKitchen.jsx"
 import UnauthorizedPage from './components/auth/UnauthorizedPage.jsx';
 import KitchenMenu from './pages/KitchenMenu.jsx';
-
+import CustomerPremium from './components/home/CustomerPremium';
 import Earning from './Dashboard/riderdashboard/pages/Earning';
 import OrderHistory from './Dashboard/riderdashboard/pages/OrderHistory';
 import RiderSettings from './Dashboard/riderdashboard/pages/RiderSettings';
@@ -92,6 +92,7 @@ const AppContent: React.FC = () => {
           <Route path='/cart' element={<CartPage />} />
           <Route path="/success" element={<PaymentSuccess />} />
           <Route path="/customer-dashboard" element={<GetCustomerOrder />} />
+          <Route path="/customer-premium" element={<CustomerPremium />} />
 
 
 

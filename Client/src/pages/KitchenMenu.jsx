@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { Star, Clock, Tag, ChefHat, Loader2, ShoppingCart } from "lucide-react";
 import { useCart } from "../context/CartContext"; // Import Cart Context
 import Review from "./Review";
+import API_BASE_URL from "../utils/config"; // Adjust the import path as necessary
 
 const KitchenMenu = () => {
     const { id } = useParams();
@@ -15,7 +16,7 @@ const KitchenMenu = () => {
     useEffect(() => {
         const fetchKitchen = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/api/kitchen/${id}`);
+                const response = await fetch(`${API_BASE_URL}/api/kitchen/${id}`);
 
                 if (!response.ok) {
                     throw new Error("Failed to fetch kitchen details.");

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import API_BASE_URL from "../utils/config"; // Adjust the import path as necessary
 
 const GetCustomerCustomizeOrder = () => {
     const { id } = useParams();  // Getting `id` from URL
@@ -10,7 +11,7 @@ const GetCustomerCustomizeOrder = () => {
     useEffect(() => {
         const fetchCustomOrders = async () => {
             try {
-                const response = await fetch("http://localhost:5000/api/kitchen/customize/finduserorder", {
+                const response = await fetch(`${API_BASE_URL}/api/kitchen/customize/finduserorder`, {
                     method: "POST",  
                     headers: {
                         "Content-Type": "application/json",

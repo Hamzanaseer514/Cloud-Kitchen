@@ -1,3 +1,4 @@
+import API_BASE_URL from '.././utils/config';
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { useAuth } from "./AuthContext"; // path adjust kar lena
 
@@ -41,7 +42,7 @@ const token = localStorage.getItem("token");
     if (!userId || !token) return;
 
     try {
-      await fetch("http://localhost:5000/api/auth/updatecart", {
+      await fetch(`${API_BASE_URL}/api/auth/updatecart`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -60,7 +61,7 @@ const token = localStorage.getItem("token");
       if (!userId || !token) return;
 
       try {
-        const response = await fetch("http://localhost:5000/api/auth/getcart", {
+        const response = await fetch(`${API_BASE_URL}/api/auth/getcart`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
