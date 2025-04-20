@@ -16,8 +16,8 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 app.use(
   cors({
-    // origin: "http://localhost:5173", // React frontend
-    origin: process.env.CLIENT_URL, 
+    origin: "http://localhost:5173", // React frontend
+    // origin: process.env.CLIENT_URL, 
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
@@ -37,7 +37,7 @@ app.post("/uploadimage", upload.single('image'), (req, res) => {
   }
   res.json({
       success: true,
-      image_url: `http://localhost:${PORT}/images/${req.file.filename}`
+      image_url: `hhttps://cloudkitchen-w5xa.onrender.com/images/${req.file.filename}`
   });
 });
 
