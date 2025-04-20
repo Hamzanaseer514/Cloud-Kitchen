@@ -1,5 +1,5 @@
 const Kitchen = require("../models/CloudKitchen");
-const OrderHistory = require("../models/orderHistory");
+const OrderHistory = require("../models/OrderHistory");
 
 // ✅ Register a new kitchen
 const registerKitchen = async (req, res) => {
