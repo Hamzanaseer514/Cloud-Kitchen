@@ -1,10 +1,11 @@
-require('dotenv').config();
 const express = require("express");
+const dotenv = require("dotenv");
 const Stripe = require("stripe");
 const router = express.Router();
 
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
+dotenv.config(); // Load environment variables from .env file
 // Create a checkout session
 router.post("/create-checkout-session", async (req, res) => {
   try {
@@ -34,8 +35,8 @@ router.post("/create-checkout-session", async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: "http://localhost:3000/success",
-      cancel_url: "http://localhost:3000/cancel",
+      success_url: `${process.env.CLIENT_URL}/success`,
+      cancel_url: `${process.env.CLIENT_URL}/cancel`,
     });
 
 

@@ -4,6 +4,7 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 import { loadStripe } from "@stripe/stripe-js";
+import  API_BASE_URL  from '../utils/config';
 
 const stripePromise = loadStripe("pk_test_51QM8InGrY1JqG9Bl9huwlyiEbRMfBJ1L53aH513B5LKQkT6hFBlrswOpltUyXzn3jZyRpwG633LQHMdbegVFiRui00rtF0Slhe");
 
@@ -21,7 +22,7 @@ const CartPage = () => {
     try {
       const stripe = await stripePromise;
 
-      const response = await fetch("http://localhost:5000/api/payment/create-checkout-session", {
+      const response = await fetch(`${API_BASE_URL}/api/payment/create-checkout-session`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,7 +49,7 @@ const CartPage = () => {
   };
 
   const addOrdertoUserOrder = async (paymentStatus: string, paymentType: String) => {
-    console.log("hamza")
+    // console.log("hamza")
     try {
       const address = prompt("Please enter your address:");
       if (!address) {
@@ -56,7 +57,7 @@ const CartPage = () => {
         return;
       }
       
-      const response = await fetch("http://localhost:5000/api/auth/adduserorder", {
+      const response = await fetch(`${API_BASE_URL}/api/auth/adduserorder`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -89,6 +90,8 @@ const CartPage = () => {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Continue Shopping
           </Link>
+
+
         </div> */}
 
         <h1 className="text-3xl font-bold text-gray-800 mb-8">Your Cart</h1>

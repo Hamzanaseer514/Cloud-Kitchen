@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Navigate, useNavigate } from "react-router-dom";
+import API_BASE_URL from "../utils/config"; 
 
 const ChefRegisterPage = () => {
   const [step, setStep] = useState(1);
@@ -85,7 +86,7 @@ const ChefRegisterPage = () => {
 
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/api/auth/register", {
+      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -169,7 +170,7 @@ const ChefRegisterPage = () => {
       const userImageFormData = new FormData();
       userImageFormData.append("image", userImage);
 
-      const userImageResponse = await fetch("http://localhost:5000/uploadimage", {
+      const userImageResponse = await fetch(`${API_BASE_URL}/uploadimage`, {
         method: "POST",
         body: userImageFormData,
       });
@@ -181,7 +182,7 @@ const ChefRegisterPage = () => {
       const kitchenLogoFormData = new FormData();
       kitchenLogoFormData.append("image", kitchenLogo);
 
-      const kitchenLogoResponse = await fetch("http://localhost:5000/uploadimage", {
+      const kitchenLogoResponse = await fetch(`${API_BASE_URL}/uploadimage`, {
         method: "POST",
         body: kitchenLogoFormData,
       });
@@ -197,7 +198,7 @@ const ChefRegisterPage = () => {
       };
 
       // Step 4: Send Final Create Kitchen API Request
-      const response = await fetch("http://localhost:5000/api/kitchen/create", {
+      const response = await fetch(`${API_BASE_URL}/api/kitchen/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

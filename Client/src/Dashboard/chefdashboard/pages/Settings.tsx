@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Key, Shield } from "lucide-react";
+import API_BASE_URL from "../../../utils/config";
 
 export function Settings() {
   const [user, setUser] = useState({
@@ -16,7 +17,7 @@ export function Settings() {
 
   // Fetch user data from API
   useEffect(() => {
-    fetch("http://localhost:5000/api/auth/me", {
+    fetch(`${API_BASE_URL}/api/auth/me`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -49,7 +50,7 @@ export function Settings() {
     setLoading(true);
     setMessage("");
 
-    fetch("http://localhost:5000/api/auth/updateprofile", {
+    fetch(`${API_BASE_URL}/api/auth/updateprofile`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

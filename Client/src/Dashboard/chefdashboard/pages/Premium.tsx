@@ -1,4 +1,5 @@
 import React from "react";
+import API_BASE_URL from "../../../utils/config";
 import { motion } from "framer-motion";
 import { FaCheckCircle } from "react-icons/fa";
 import { loadStripe } from "@stripe/stripe-js";
@@ -10,7 +11,7 @@ const Premium: React.FC = () => {
   const handleCheckout = async (planName: string, price: number) => {
     const stripe = await stripePromise;
     // Make a request to your backend to create the checkout session
-    const response = await fetch("http://localhost:5000/api/chef-payment/create-checkout-session", {
+    const response = await fetch(`${API_BASE_URL}/api/chef-payment/create-checkout-session`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

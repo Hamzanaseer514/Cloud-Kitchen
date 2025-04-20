@@ -1,3 +1,4 @@
+import API_BASE_URL from '.././utils/config';
 import { createContext, useState, useEffect } from "react";
 
 export const KitchenContext = createContext();
@@ -10,7 +11,7 @@ export const KitchenProvider = ({ children }) => {
     useEffect(() => {
         const fetchKitchens = async () => {
             try {
-                const response = await fetch("http://localhost:5000/api/kitchen/all"); // API URL
+                const response = await fetch(`${API_BASE_URL}/api/kitchen/all`); // API URL
                 if (!response.ok) {
                     throw new Error("Failed to fetch kitchens");
                 }

@@ -15,6 +15,8 @@ const CartItemSchema = new mongoose.Schema({
   quantity: Number
 });
 
+
+
 const UserSchema = new mongoose.Schema({
   fullname: {
     type: String,
@@ -66,7 +68,14 @@ const UserSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
-  }
+  },
+  subscription: {
+    isPremium: { type: Boolean, default: false },
+    price: { type: Number, default: 0 },
+    plan: { type: String, enum: ['free', 'Basic', 'Advance', 'Pro'], default: 'free'},
+    startDate: { type: Date },
+    endDate: { type: Date },
+  },
 });
 
 // Encrypt password using bcrypt

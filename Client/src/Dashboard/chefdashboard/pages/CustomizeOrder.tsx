@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import API_BASE_URL from "../../../utils/config";
 import {
   ChefHat,
   Flame,
@@ -81,7 +82,7 @@ function App() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/kitchen/customize/order", {
+        const response = await fetch(`${API_BASE_URL}/api/kitchen/customize/order`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`
@@ -114,7 +115,7 @@ function App() {
   const updateOrder = async (id: string, updates: Partial<Order>) => {
     alert(id)
     try {
-      const response = await fetch("http://localhost:5000/api/kitchen/customize/updateorder", {
+      const response = await fetch(`${API_BASE_URL}/api/kitchen/customize/updateorder`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

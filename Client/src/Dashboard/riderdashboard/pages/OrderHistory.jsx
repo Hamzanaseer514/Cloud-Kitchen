@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { FaTruck } from "react-icons/fa";
+import API_BASE_URL from "../../../utils/config";
 
-const API_URL = "http://localhost:5000/api/orders/available-for-rider";
-const ACCEPT_ORDER_URL = "http://localhost:5000/api/orders/accept";
-const UPDATE_STATUS_URL = "http://localhost:5000/api/orders/updateorderstatus";
+const API_URL = `${API_BASE_URL}/api/orders/available-for-rider`;
+const ACCEPT_ORDER_URL = `${API_BASE_URL}/api/orders/accept`;
+const UPDATE_STATUS_URL = `${API_BASE_URL}/api/orders/updateorderstatus`;
 
 const OrderHistory = () => {
   const [orders, setOrders] = useState([]);

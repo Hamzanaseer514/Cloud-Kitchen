@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Package2, Truck, AlertCircle, Loader2, Phone, Mail, Car, CreditCard, ChevronDown, ChevronUp, ShoppingBag } from "lucide-react";
+import API_BASE_URL from "../../../utils/config";
 
 interface OrderItem {
   _id: string;
@@ -33,7 +34,7 @@ const ChefDashboard: React.FC = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/orders/getorderswithriderinfo", {
+        const response = await fetch(`${API_BASE_URL}/api/orders/getorderswithriderinfo`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

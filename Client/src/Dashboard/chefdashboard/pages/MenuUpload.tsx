@@ -1,4 +1,5 @@
 import { useState } from "react";
+import API_BASE_URL from "../../../utils/config";
 
 const MenuUpload = () => {
   const [formData, setFormData] = useState({
@@ -68,7 +69,7 @@ const MenuUpload = () => {
       const imageFormData = new FormData();
       imageFormData.append("image", formData.image);
   
-      const imageUploadResponse = await fetch("http://localhost:5000/uploadimage", {
+      const imageUploadResponse = await fetch(`${API_BASE_URL}/uploadimage`, {
         method: "POST",
         body: imageFormData,
       });
@@ -88,7 +89,7 @@ const MenuUpload = () => {
 
       console.log(menuData);
   
-      const response = await fetch("http://localhost:5000/api/kitchen/addmenu", {
+      const response = await fetch(`${API_BASE_URL}/api/kitchen/addmenu`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
