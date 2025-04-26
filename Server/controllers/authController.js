@@ -3,7 +3,7 @@ const Rider = require('../models/Rider');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const { chkChefKitchen } = require("./CloudKitchen");
-const OrderHistory = require("../models/orderHistory");
+const OrderHistory = require("../models/OrderHistory");
 const Kitchen = require("../models/CloudKitchen");
 // @desc    Register user
 // @route   POST /api/auth/register
