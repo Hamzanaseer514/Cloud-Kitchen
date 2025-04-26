@@ -1,3 +1,4 @@
+const checkSubscription = require('../middleware/checkSubscription');
 const express = require('express');
 const {
     registerKitchen,
@@ -10,7 +11,8 @@ const {
     getAllOrderofSpecificUser,
     addKitchenReview,
     fetchReviewOfSpecificKitchen,
-    getAllReviewsOfKitchen
+    getAllReviewsOfKitchen,
+    saveUserSubscription
 
 } = require('../controllers/CloudKitchen');
 
@@ -25,7 +27,9 @@ router.post('/create', protect, registerKitchen);
 router.get('/all', getAllKitchens);
 router.put('/updatekitchen/:id', protect, updateKitchen);
 router.get("/:id", getKitchenMenus);
-router.post('/addmenu',protect,AddMenu)
+// router.post('/addmenu',protect,AddMenu)
+router.post('/addmenu', protect, checkSubscription, AddMenu);
+router.post('/saveUserSubscriptions', protect, saveUserSubscription);
 router.post('/addcustomorder', protect, addCustomOrder);
 router.get('/customize/order',protect, getCustomOrdersForSpecificKitchen);
 router.put('/customize/updateorder', updateOrderStatus);

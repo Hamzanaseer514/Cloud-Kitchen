@@ -76,6 +76,10 @@ const UserSchema = new mongoose.Schema({
     startDate: { type: Date },
     endDate: { type: Date },
   },
+  menusUploaded: {
+    type: Number,
+    default: 0,
+  },
 });
 
 // Encrypt password using bcrypt

@@ -43,7 +43,8 @@ import PaymentSuccess from './pages/PaymentSuccess.jsx';
 import PopularKitchens from './components/home/PopularKitchens.jsx';
 import GetCustomerOrder from './pages/GetCustomerOrder.jsx';
 import ComplaintKitchen from './Dashboard/riderdashboard/pages/ComplaintKitchen.js';
-
+import ChefPremium from './components/home/ChefPremium.jsx';
+import ChefPremiumChatbot from './components/home/ChefPremiumChatbot.js';
 
 
 
@@ -52,9 +53,8 @@ const AppContent: React.FC = () => {
   const location = useLocation();
   const hideChatbotRoutes: string[] = [
     "/chef-register", "/login", "/register",
-    "/chef-dashboard", "/chef-dashboard/orders",
-    "/chef-dashboard/schedule", "/chef-dashboard/team",
-    "/chef-dashboard/settings",
+    "/chef-dashboard/orders",
+     "/chef-dashboard/team",
     "/chef-dashboard/premium",
     "/chef-dashboard/customizeorder",
     "/chef-dashboard/menuupload",
@@ -88,12 +88,12 @@ const AppContent: React.FC = () => {
           </Route>
           <Route element={<ProtectedRoute requiredRole="customer" />}>
             <Route path='/cart' element={<CartPage />} />
+          <Route path="/customer-premium" element={<CustomerPremium />} />
           </Route>
           <Route path='/kitchen/:id/customize-food' element={<CustomizeFood />} />
           <Route path='/cart' element={<CartPage />} />
           <Route path="/success" element={<PaymentSuccess />} />
           <Route path="/customer-dashboard" element={<GetCustomerOrder />} />
-          <Route path="/customer-premium" element={<CustomerPremium />} />
 
 
 
@@ -108,6 +108,8 @@ const AppContent: React.FC = () => {
               <Route path="menuupload" element={<MenuUpload />} />
               <Route path="deliverypartners" element={<DeliveryPartners />} />
             </Route>
+              <Route path="/chef-premium" element={<ChefPremium />} />
+              <Route path="/chef-premium-chatbot" element={<ChefPremiumChatbot />} />
           </Route>
 
           {/* Unauthorized Page */}

@@ -16,8 +16,10 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 app.use(
   cors({
+
     origin: "https://hncloudkitchen.netlify.app", // React frontend
     // origin: process.env.CLIENT_URL, 
+
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
@@ -57,7 +59,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to the Cloud Kitchen API' });
+  res.json({ message: 'Welcome to the Cloud Kitchen API, hamza' });
 });
 
 // API routes

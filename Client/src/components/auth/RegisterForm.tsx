@@ -6,6 +6,8 @@ import Input from '../ui/Input';
 import Button from '../ui/Button';
 import { useAuth } from '../../context/AuthContext';
 import { UserRole } from '../../types';
+import API_BASE_URL from '../../utils/config';
+
 
 interface RegisterFormData {
   fullname: string;
