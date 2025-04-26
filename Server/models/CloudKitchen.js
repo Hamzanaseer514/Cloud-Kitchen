@@ -39,6 +39,10 @@ const MenuSchema = new mongoose.Schema({
     type: String, // Menu item image URL
     default: "",
   },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const reviewsSchema = new mongoose.Schema({

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import API_BASE_URL from "../../../utils/config";
+import { useNavigate } from "react-router-dom";
 
 const MenuUpload = () => {
   const [formData, setFormData] = useState({
@@ -10,7 +11,9 @@ const MenuUpload = () => {
     ingredients: "",
     image: null as File | null,
   });
+  // const [isMenuLimitReached, setIsMenuLimitReached] = useState(false);
 
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -26,18 +29,18 @@ const MenuUpload = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     // ✅ Trim and validate ingredients field
     // const formattedIngredients = formData.ingredients
     //   .split(",") // Comma se split karna
     //   .map((item) => item.trim()) // Extra spaces remove karna
     //   .filter((item) => item !== ""); // Empty values remove karna
-  
+
     // if (formattedIngredients.length === 0) {
     //   alert("Please enter at least one ingredient!");
     //   return;
     // }
-  
+
     // ✅ Validation Check for Other Fields
     if (!formData.menuName.trim()) {
       alert("Menu name is required!");
@@ -55,28 +58,28 @@ const MenuUpload = () => {
       alert("Please upload an image!");
       return;
     }
-  
+
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
-  
+
       if (!token) {
         alert("User not authenticated!");
         return;
       }
-  
+
       // ✅ Step 1: Upload Image and Get URL
       const imageFormData = new FormData();
       imageFormData.append("image", formData.image);
-  
+
       const imageUploadResponse = await fetch(`${API_BASE_URL}/uploadimage`, {
         method: "POST",
         body: imageFormData,
       });
-  
+
       const imageResponse = await imageUploadResponse.json();
       const imageUrl = imageResponse.image_url;
-  
+
       // ✅ Step 2: Send Menu Data to Backend
       const menuData = {
         name: formData.menuName,
@@ -88,7 +91,7 @@ const MenuUpload = () => {
       };
 
       console.log(menuData);
-  
+
       const response = await fetch(`${API_BASE_URL}/api/kitchen/addmenu`, {
         method: "POST",
         headers: {
@@ -97,11 +100,18 @@ const MenuUpload = () => {
         },
         body: JSON.stringify(menuData),
       });
-  
+
+      // Check if the response is an error (e.g., limit exceeded for free plan)
+      if (response.status === 403) {
+        alert("You have reached the menu upload limit for the Free Plan. Please upgrade to Premium.");
+            navigate("/chef-premium"); // Redirect to premium plans page 
+            return
+        }
+
       if (!response.ok) {
         throw new Error("Failed to add menu");
       }
-  
+
       alert("Menu added successfully!");
       setFormData({
         menuName: "",
@@ -118,7 +128,7 @@ const MenuUpload = () => {
       setLoading(false);
     }
   };
-  
+
 
   return (
     <div className="max-w-5xl mx-auto bg-white p-10 rounded-xl shadow-lg mt-10 border-t-4 border-orange-500">

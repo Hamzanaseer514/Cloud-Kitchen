@@ -9,7 +9,7 @@ dotenv.config(); // Load environment variables from .env file
 // Create a checkout session
 router.post("/create-checkout-session", async (req, res) => {
   try {
-    const { planName, price } = req.body; // Get the plan name and price from the request body
+    const { planName, price, type } = req.body; // Get the plan name and price from the request body
 
     if (!planName || !price) {
       return res.status(400).json({ error: "Missing plan name or price" });
@@ -35,8 +35,8 @@ router.post("/create-checkout-session", async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: `${process.env.CLIENT_URL}/success`,
-      cancel_url: `${process.env.CLIENT_URL}/cancel`,
+      success_url: `${process.env.CLIENT_URL}/success?role=chef&type=${type}`,
+      cancel_url: `${process.env.CLIENT_URL}/cancel?role=chef&type=chatbot`,
     });
 
 

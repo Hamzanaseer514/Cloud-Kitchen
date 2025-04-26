@@ -59,8 +59,7 @@ exports.login = asyncHandler(async (req, res, next) => {
   // Validate email & password
   if (!email || !password) {
     console.log("Missing Email or Password");
-    return next(new ErrorResponse('Please provide an email and password', 400));
-  }
+    return next(new ErrorResponse('Please provide an email and password', 400)); }
 
   // Check for user in database
   const user = await User.findOne({ email }).select('+password');

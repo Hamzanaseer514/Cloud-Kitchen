@@ -50,6 +50,7 @@ const Chatbot = () => {
   const [isPremium, setIsPremium] = useState(false); // Change this to determine if the user has a premium subscription
   const [premiumPlan, setPremiumPlan] = useState('free'); // Change this to determine if the user has a premium subscription
   const [isOpen, setIsOpen] = useState(false);
+  const [role, setRole] = useState(''); // Change this to determine if the user has a premium subscription
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -83,7 +84,7 @@ const Chatbot = () => {
   useEffect(() => {
     const checkPremiumStatus = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/auth/check-premiums`, {
+        const response = await fetch(`${API_BASE_URL}/api/auth/check-premium`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -92,14 +93,17 @@ const Chatbot = () => {
         });
   
         const data = await response.json();
-        console.log("Received data:", data);  // This should show { isPremium: true/false }
+        console.log("Received data:", data);  
   
         if (data.isPremium) {
           setIsPremium(true);
-          setPremiumPlan(data.plan); // Set the plan from the response
+          setPremiumPlan(data.plan);
         } else {
           setIsPremium(false);
         }
+  
+        setRole(data.role); // 👈 Set role also in frontend state if needed
+  
       } catch (error) {
         console.error('Error checking premium status:', error);
       }
@@ -108,18 +112,24 @@ const Chatbot = () => {
     checkPremiumStatus();
   }, []);
   
+  
+
+  
 
   const handleClickChatButton = () => {
-    if (isPremium && premiumPlan === "Advance" || premiumPlan === "Pro") {
+    if (isPremium && premiumPlan === "Advance" || premiumPlan === "Pro" ) {
       setIsOpen(true);
-    } else {
+    } else if (role === "customer") {
       // Redirect to the premium plan page if the user hasn't bought it
       navigate('/customer-premium'); // This will navigate to CustomerPremium page
       alert("Please buy the premium monthly or yearly plan to use the chatbot");
-
     }
+    else {
+      // Redirect to the premium plan page if the user hasn't bought it
+      navigate('/chef-premium-chatbot'); // This will navigate to ChefPremium page
+      alert("Please buy the premium monthly or yearly plan to use the chatbot");
+    } 
   };
-
   // Auto-scroll to bottom of messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
