@@ -6,6 +6,8 @@ import Input from '../ui/Input';
 import Button from '../ui/Button';
 import { useAuth } from '../../context/AuthContext';
 import { UserRole } from '../../types';
+import API_BASE_URL from '../../utils/config';
+
 
 interface RegisterFormData {
   fullname: string;
@@ -41,7 +43,7 @@ const RegisterForm: React.FC = () => {
     try {
       const { confirmPassword, ...userData } = data;
   
-      const response = await fetch("http://localhost:5000/api/auth/register", {
+      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
