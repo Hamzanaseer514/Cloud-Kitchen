@@ -22,12 +22,16 @@ const { protect } = require('../middleware/auth');
 const checkSubscription = require('../middleware/checkSubscription');
 
 router.get('/check-premium', protect, checkSubscription, async (req, res) => {
-  const user = req.userData; // 👈 No need to call findById again
+  const user = req.userData; // No need to call findById again
 
   res.status(200).json({
     isPremium: user.subscription.isPremium,
+    enddate: user.subscription.endDate,
+    startdate: user.subscription.startDate,
+    price: user.subscription.price,
     role: user.role,
-    plan: user.subscription.plan, // Ab plan bhi bhej diya
+    plan: user.subscription.plan, // Plan
+    menusLeft: user.menusLeft,  // Pass remaining menus
   });
 });
 

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Check, X, Star, Loader2, ChefHat, Search, RefreshCw, Mail, MessageSquare } from "lucide-react";
+import API_BASE_URL from "../../../utils/config";
+
 
 function CheckReviewsOfKitchen() {
     const [kitchenData, setKitchenData] = useState([]);
@@ -16,7 +18,7 @@ function CheckReviewsOfKitchen() {
 
     const fetchKitchens = async () => {
         try {
-            const res = await fetch("http://localhost:5000/api/kitchen/chkreview/all");
+            const res = await fetch(`${API_BASE_URL}/api/kitchen/chkreview/all`);
             const data = await res.json();
             setKitchenData(data.kitchen || []);
             setLoading(false);
@@ -35,7 +37,7 @@ function CheckReviewsOfKitchen() {
     const handleApproveChange = async (id, newValue) => {
         setUpdating(id);
         try {
-            const response = await fetch(`http://localhost:5000/api/kitchen/updatekitchen/${id}`, {
+            const response = await fetch(`${API_BASE_URL}/api/kitchen/updatekitchen/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

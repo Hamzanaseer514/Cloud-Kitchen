@@ -1,56 +1,80 @@
-import { useState } from 'react';
+import API_BASE_URL from "../../../utils/config";
+import { useState, useEffect } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
-  PointElement,
-  LineElement,
+  ArcElement,
   BarElement,
   Title,
   Tooltip,
   Legend,
-  TimeScale
 } from 'chart.js';
 
-import { Line, Bar } from 'react-chartjs-2';
+import { Doughnut, Bar } from 'react-chartjs-2'; // <-- Pie ko Doughnut se replace kiya!
+
 // Register required Chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
-  PointElement,
-  LineElement,
+  ArcElement,
   BarElement,
   Title,
   Tooltip,
   Legend,
-  TimeScale
 );
 
-// Sample data for analytics
+// Sample plans data
+const plans = [
+  {
+    displayName: "Weekly",     // what user sees
+    internalName: "Basic",     // what backend/Stripe sees
+    price: 1000,
+    duration: "Per Week",
+    features: ["10 Menus Can be Uploaded", "Priority Support"],
+  },
+  {
+    displayName: "Monthly",
+    internalName: "Advance",
+    price: 1750,
+    duration: "Per Month",
+    features: ["All Basic Benefits", "AI Chatbot Support",  "30 Menus can Be uploaded"],
+  },
+  {
+    displayName: "Yearly",
+    internalName: "Pro",
+    price: 5999,
+    duration: "Per Year",
+    features: ["All Advance Benefits", "Special Offers", "Unlimited Menus Can Be Uploaded"],
+  },
+];
+
 const analyticsData = {
   orders: {
     labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
     datasets: [{
       label: 'Orders',
       data: [65, 59, 80, 81, 56, 55, 40],
-      borderColor: '#4F46E5',
-      tension: 0.4,
-      fill: true,
-      backgroundColor: 'rgba(79, 70, 229, 0.1)',
+      backgroundColor: [
+          '#F87171', '#FBBF24', '#34D399', '#60A5FA', '#A78BFA', '#F472B6', '#FACC15',
+      ],
+      hoverOffset: 10,
     }]
   },
   revenue: {
-    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    labels: Array.from({ length: 10 }, (_, i) => `${i * 500}-${(i + 1) * 500}`),
     datasets: [{
-      label: 'Revenue ($)',
-      data: [4500, 4200, 4800, 4600, 4100, 4000, 3800],
-      backgroundColor: 'rgba(16, 185, 129, 0.8)',
+      label: 'Revenue Distribution',
+      data: [2, 5, 9, 15, 10, 8, 5, 3, 1, 0],
+      backgroundColor: '#FB923C',
       borderRadius: 8,
     }]
   }
 };
 
 export function Dashboard() {
+  const [Premium, setPremium] = useState(null); // Premium status
+
   const stats = [
     { label: 'Active Orders', value: '24', change: '+12%', trend: 'up' },
     { label: 'Completed Today', value: '156', change: '-8%', trend: 'down' },
@@ -58,7 +82,7 @@ export function Dashboard() {
     { label: 'Average Rating', value: '4.8', change: '-2%', trend: 'down' },
   ];
 
-  const chartOptions = {
+  const donutOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -67,20 +91,65 @@ export function Dashboard() {
         position: 'top' as const,
       },
     },
-    scales: {
-      y: {
-        beginAtZero: true,
-        grid: {
-          display: false,
-        },
+    cutout: '60%', 
+  };
+
+  const barOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false,
       },
+      title: {
+        display: true,
+        text: 'Revenue Histogram',
+      },
+    },
+    scales: {
       x: {
-        grid: {
-          display: false,
+        title: {
+          display: true,
+          text: 'Revenue Range ($)',
         },
+        grid: { display: false },
+      },
+      y: {
+        title: { display: true, text: 'Number of Transactions' },
+        beginAtZero: true,
+        grid: { display: false },
       },
     },
   };
+
+  useEffect(() => {
+    const checkPremiumStatus = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/auth/check-premium`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+        const data = await response.json();
+        console.log("Received data:", data);
+
+        if (data.isPremium) {
+          setPremium(data); // Set premium data
+        } else {
+          setPremium(null);
+        }
+      } catch (error) {
+        console.error('Error checking premium status:', error);
+      }
+    };
+
+    checkPremiumStatus();
+  }, []);
+
+  // Map plan features dynamically based on the plan the user has
+  const currentPlanFeatures = plans.find(plan => plan.internalName === Premium?.plan);
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -109,21 +178,62 @@ export function Dashboard() {
         ))}
       </section>
 
+
       {/* Analytics Section */}
       <section className="container mx-auto px-6 py-8 grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white p-6 rounded-xl shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Orders Trend</h2>
+          <h2 className="text-xl font-semibold mb-4">Orders Distribution</h2>
           <div className="h-64">
-            <Line data={analyticsData.orders} options={chartOptions} />
+            <Doughnut data={analyticsData.orders} options={donutOptions} />
           </div>
         </div>
         <div className="bg-white p-6 rounded-xl shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Revenue Analysis</h2>
+          <h2 className="text-xl font-semibold mb-4">Revenue Histogram</h2>
           <div className="h-64">
-            <Bar data={analyticsData.revenue} options={chartOptions} />
+            <Bar data={analyticsData.revenue} options={barOptions} />
           </div>
         </div>
       </section>
+
+        {/* Subscription Info */}
+<section className="container mx-auto px-6 py-8">
+  <div className="bg-white p-8 rounded-xl shadow-md border border-gray-100">
+    <h2 className="text-2xl font-bold mb-6 text-gray-800">Your Subscription</h2>
+    
+    <div className="mb-6 space-y-2">
+      <p className="text-xl font-semibold text-indigo-600">
+        {Premium ? Premium.plan : "Loading..."}
+      </p>
+      <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-gray-600">
+        <span>Start: {Premium ? Premium.startdate : "Loading..."}</span>
+        <span>End: {Premium ? Premium.enddate : "Loading..."}</span>
+        <span>Price: {Premium ? Premium.price : "Loading..."}</span>
+        <span>Remaining: {Premium ? `${Premium.menusLeft} menus` : "Loading..."}</span>
+      </div>
+    </div>
+
+    {/* Plan Features */}
+    <div className="border-t pt-6">
+      <h3 className="text-lg font-semibold mb-3 text-gray-700">Plan Benefits:</h3>
+      {currentPlanFeatures ? (
+        <ul className="space-y-2 text-gray-700 list-disc pl-5">
+          {currentPlanFeatures.features.map((benefit, index) => (
+            <li key={index}>{benefit}</li>
+          ))}
+        </ul>
+      ) : (
+        <div className="animate-pulse flex space-x-4">
+          <div className="flex-1 space-y-4 py-1">
+            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+            <div className="h-4 bg-gray-200 rounded"></div>
+            <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+          </div>
+        </div>
+      )}
+    </div>
+
+  </div>
+</section>
     </div>
   );
 }

@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Check, X, Loader2, AlertCircle, Clock } from 'lucide-react';
+import API_BASE_URL from "../../../utils/config";
 
-const API_URL = "http://localhost:5000/api/kitchen/all";
+
+const API_URL = `${API_BASE_URL}/api/kitchen/all`;
 
 export function KitchenApproval() {
   const [kitchens, setKitchens] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
 
   useEffect(() => {
     const fetchKitchens = async () => {
@@ -40,7 +43,7 @@ export function KitchenApproval() {
       ));
   
       // ✅ Backend API Call
-      const response = await fetch(`http://localhost:5000/api/kitchen/updatekitchen/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/kitchen/updatekitchen/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' ,
         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -119,7 +122,7 @@ export function KitchenApproval() {
                 <td className="whitespace-nowrap px-3 py-4">
                   <div className="h-16 w-24 overflow-hidden rounded-lg bg-gray-100">
                     <img
-                      src={`http://localhost:5000/uploads/${kitchen.kitchenLogo}`}
+                      src={`${API_BASE_URL}/uploads/${kitchen.kitchenLogo}`}
                       alt={kitchen.kitchenName}
                       className="h-full w-full object-cover"
                       onError={(e) => {

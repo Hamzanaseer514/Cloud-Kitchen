@@ -75,11 +75,7 @@ const UserSchema = new mongoose.Schema({
     plan: { type: String, enum: ['free', 'Basic', 'Advance', 'Pro'], default: 'free'},
     startDate: { type: Date },
     endDate: { type: Date },
-  },
-  menusUploaded: {
-    type: Number,
-    default: 0,
-  },
+  }
 });
 
 // Encrypt password using bcrypt
