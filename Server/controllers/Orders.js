@@ -1,5 +1,5 @@
 
-const OrderHistory = require('../models/orderHistory');
+const OrderHistory = require('../models/OrderHistory');
 const User = require('../models/User');
 const CloudKitchen = require('../models/CloudKitchen');
 const Rider = require("../models/Rider")
