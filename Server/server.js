@@ -17,8 +17,8 @@ const PORT = process.env.PORT || 5000;
 app.use(
   cors({
 
-    origin: "https://hncloudkitchen.netlify.app", // React frontend
-    // origin: process.env.CLIENT_URL, 
+    // origin: "https://hncloudkitchen.netlify.app", 
+    origin: process.env.CLIENT_URL, 
 
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -39,7 +39,7 @@ app.post("/uploadimage", upload.single('image'), (req, res) => {
   }
   res.json({
       success: true,
-      image_url: `hhttps://cloudkitchen-w5xa.onrender.com/images/${req.file.filename}`
+      image_url: `https://cloudkitchen-w5xa.onrender.com/images/${req.file.filename}`
   });
 });
 
