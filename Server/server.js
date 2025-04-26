@@ -57,7 +57,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to the Cloud Kitchen API' });
+  res.json({ message: 'Welcome to the Cloud Kitchen API, hamza' });
 });
 
 // API routes
